@@ -9,23 +9,20 @@
 
 #include <boost/asio.hpp>
 #include <boost/asio/thread_pool.hpp>
-#include <boost/optional.hpp>
+#include <boost/noncopyable.hpp>
 
 #include <iostream>
-
-
-
-static constexpr std::string_view DEFAULT_LOG_ROOT = "../log";
 
 
 
 namespace http
 {
 	using namespace boost::asio;
+	using namespace boost::filesystem;
 
 
 	
-	class HttpServer
+	class http_server : boost::noncopyable
 	{
 	public:
 
@@ -34,40 +31,40 @@ namespace http
 		using endpoint_t = ip::tcp::endpoint;
 
 
-
-		HttpServer(const HttpServer&) = delete;
-		HttpServer& operator=(const HttpServer&) = delete;
-
-
-
-		HttpServer(HttpServer&&) = default;
-		HttpServer& operator=(HttpServer&&) = default;
-		~HttpServer() = default;
-
-
-
-		HttpServer(io_context& _io_context, std::uint16_t _port, const std::string& _path_to_documents_root,
-				   size_t _amount_trheads = 1, const std::string& _path_to_log_root = DEFAULT_LOG_ROOT.data()) noexcept;
-
-		void start() noexcept;
-		void shutdown() noexcept;
-
-	protected:
-
-		void async_accept_handler() noexcept;
-
-	protected:
-
-		io_context& m_io_context;
-		thread_pool m_thread_pool;
 		
-		boost::optional<socket_t> m_socket;
-		acceptor_t m_acceptor;
+		http_server(http_server&&) = default;
+		http_server& operator=(http_server&&) = default;
+		~http_server() = default;
 
-		std::string m_path_to_documents_root;
-		FileLogger m_logger;
 
-		SessionManager m_session_manager;
+
+		http_server(const std::string _address, uint16_t _port,
+					const path& _path_to_documents_root,	const path& _path_to_log_root);
+
+		void run();
+
+	protected:
+
+		void setup_signals();
+		void setup_acceptor(const std::string& _address, uint16_t _port);
+		void shedule_accept();
+
+		void shedule_await_stop() noexcept;
+
+	protected:
+
+		io_context io_context_;
+		thread_pool thread_pool_;
+		
+		acceptor_t acceptor_;
+		signal_set signals_;
+		
+		path document_root_;
+		
+		session_manager session_manager_;
+		
+		file_logger logger_;
+
 	};
 }
 

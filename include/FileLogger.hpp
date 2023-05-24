@@ -4,18 +4,24 @@
 
 #include "Defines.hpp"
 
-#include <boost/unordered_map.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/noncopyable.hpp>
+
+#include <unordered_map>
 
 
 
 namespace http
 {
-	class FileLogger
+	using namespace boost::filesystem;
+
+
+
+	class file_logger : boost::noncopyable
 	{
 	public:
 
-		using File = boost::filesystem::ofstream;
+		using file = boost::filesystem::ofstream;
 
 
 
@@ -31,29 +37,26 @@ namespace http
 
 
 
-		FileLogger(const FileLogger&) = delete;
-		FileLogger& operator=(const FileLogger&) = delete;
+		file_logger(file_logger&&) = default;
+		file_logger& operator=(file_logger&&) = default;
 
-		FileLogger(FileLogger&&) = default;
-		FileLogger& operator=(FileLogger&&) = default;
-
-		FileLogger(const std::string& _file_name_for_logger, const std::string& _path_to_log_directory) noexcept;
-		~FileLogger() = default;
+		file_logger(const std::string& _file_name_for_logger, const path& _path_to_log_directory) noexcept;
+		~file_logger() = default;
 
 		void log(std::string&& _message, SeverityLevel _log_type) noexcept;
 
 	private:
 
-		bool createFile(const std::string& _file_name_for_logger, const std::string& _path_to_log_directory) noexcept;
+		bool createDirectory(const path& _path_to_log_directory) noexcept;
 
 	private:
 
-		static boost::unordered_map<SeverityLevel, std::string> m_string_view_sev_levels;
+		static std::unordered_map<SeverityLevel, std::string> m_string_view_sev_levels;
 
 	private:
 
-		std::string m_path_to_log_file;
-		File m_file_to_log;
+		path m_path_to_log_file;
+		file m_file_to_log;
 		
 	};
 }

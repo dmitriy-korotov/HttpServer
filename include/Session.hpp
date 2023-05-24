@@ -9,12 +9,17 @@
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/noncopyable.hpp>
 
 
 
 namespace http
 {
-	class Session : public boost::enable_shared_from_this<Session>
+	using namespace boost::filesystem;
+
+
+
+	class session : public boost::enable_shared_from_this<session>, boost::noncopyable
 	{
 	public:
 
@@ -23,30 +28,27 @@ namespace http
 
 
 
-		Session(const Session&) = delete;
-		Session& operator=(const Session&) = delete;
+		session(session&&) = default;
+		session& operator=(session&&) = default;
 
-		Session(Session&&) = default;
-		Session& operator=(Session&&) = default;
-		~Session() = default;
-
-		Session(socket_t&& _socket, const std::string& _path_to_log_directory);
+		session(socket_t&& _socket, file_logger& _logger);
 
 		void start() noexcept;
-		std::string info() const noexcept;
 		void close() noexcept;
 
-	private:
-
-		void async_request_handler() noexcept;
-		void async_responce_handler(const std::string& _answer) noexcept;
+		std::string info() const noexcept;
 
 	private:
 
-		socket_t m_socket;
-		buffer_t m_stream_buffer;
+		void shedule_handle_of_request() noexcept;
+		void shedule_responce(const std::string& _answer) noexcept;
 
-		//FileLogger m_logger;
+	private:
+
+		socket_t socket_;
+		buffer_t stream_buffer_;
+
+		file_logger& logger_;
 
 	};
 }

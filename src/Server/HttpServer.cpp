@@ -1,9 +1,6 @@
 #include "HttpServer.hpp"
 
-#include "Session.hpp"
-
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <sstream>
 
@@ -15,51 +12,105 @@ static constexpr std::string_view DEFAULT_FILE_LOGGER_NAME = "ServerLog";
 
 namespace http
 {
-	HttpServer::HttpServer(boost::asio::io_context& _io_context, std::uint16_t _port, const std::string& _path_to_documents_root,
-						   size_t _amount_trheads, const std::string& _path_to_log_root) noexcept
-			: m_io_context(_io_context)
-			, m_thread_pool(_amount_trheads)
-			, m_socket(m_io_context)
-			, m_acceptor(m_io_context, endpoint_t(ip::tcp::v4(), _port))
-			, m_path_to_documents_root(_path_to_documents_root)
-			, m_logger(DEFAULT_FILE_LOGGER_NAME.data(), _path_to_log_root)
-			, m_session_manager(_path_to_log_root)
-	{ }
-
-
-
-	void HttpServer::start() noexcept
-	{
-		async_accept_handler();
+	http_server::http_server(const std::string _address, uint16_t _port, const path& _path_to_documents_root, const path& _path_to_log_root)
+			: io_context_(1)
+			, thread_pool_()
+			, acceptor_(io_context_)
+			, signals_(io_context_)
+			, document_root_(_path_to_documents_root)
+			, logger_(DEFAULT_FILE_LOGGER_NAME.data(), _path_to_log_root)
+			, session_manager_(_path_to_log_root)
+	{ 
+		setup_acceptor(_address, _port);
 	}
 
 
 
-	void HttpServer::shutdown() noexcept
+	void http_server::run() try
 	{
-		m_acceptor.close();
-		m_socket->close();
+		for (size_t i = 0; i < std::thread::hardware_concurrency(); ++i)
+		{
+			post(thread_pool_, [this]() { io_context_.run(); });
+		}
+		thread_pool_.join();
+	}
+	catch (const std::exception& _ex)
+	{
+		logger_.log("Can't run server: " + std::string(_ex.what()), file_logger::SeverityLevel::Fatal);
+		throw;
 	}
 
 
 
-	void HttpServer::async_accept_handler() noexcept
+	void http_server::setup_signals() try
 	{
-		m_socket.emplace(m_io_context);
+		signals_.add(SIGINT);
+		signals_.add(SIGTERM);
+#ifdef SIGQUIT
+		signals_.add(SIGQUIT)
+#endif // SIGQUIT
 
-		m_acceptor.async_accept(*m_socket, 
-			[this](boost::system::error_code _error) -> void
+
+	}
+	catch (const std::exception& _ex)
+	{
+		logger_.log("Can't setup signals: " + std::string(_ex.what()), file_logger::SeverityLevel::Fatal);
+		throw;
+	}
+
+
+
+	void http_server::setup_acceptor(const std::string& _address, uint16_t _port) try
+	{
+		ip::tcp::resolver _resolver(io_context_);
+		ip::tcp::endpoint _endpoint = *_resolver.resolve(_address, boost::lexical_cast<std::string>(_port)).begin();
+		acceptor_.open(_endpoint.protocol());
+		acceptor_.set_option(socket_base::reuse_address(true));
+		acceptor_.bind(_endpoint);
+		acceptor_.listen();
+		
+		shedule_accept();
+	}
+	catch (const std::exception& _ex)
+	{
+		logger_.log("Setup acceptor error: " + std::string(_ex.what()), file_logger::SeverityLevel::Fatal);
+		throw;
+	}
+
+
+
+	void http_server::shedule_await_stop() noexcept
+	{
+		signals_.async_wait(
+			[this]()
 			{
+				acceptor_.close();
+				session_manager_.closeAllSessions();
+			});
+	}
+
+
+
+	void http_server::shedule_accept() noexcept
+	{
+		acceptor_.async_accept( 
+			[this](boost::system::error_code _error, socket_t _socket) -> void
+			{
+				if (!acceptor_.is_open())
+				{
+					return;
+				}
+
 				if (!_error)
 				{
-					m_logger.log(std::move("Request from: " + m_socket->remote_endpoint().address().to_string()), FileLogger::SeverityLevel::Info);
-					m_session_manager.startNewSession(boost::make_shared<Session>(std::move(*m_socket), m_path_to_documents_root));
-					async_accept_handler();
+					session_manager_.startNewSession(std::move(_socket));
 				}
 				else
 				{
-					m_logger.log(_error.message(), FileLogger::SeverityLevel::Fatal);
+					logger_.log("Accept error: " + _error.message(), file_logger::SeverityLevel::Error);
 				}
+
+				shedule_accept();
 			});
 	}
 }

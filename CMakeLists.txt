@@ -25,7 +25,7 @@ link_directories(external/boost_1_82_0/bin/x64/lib)
 
 
 file(GLOB INCLUDE_FILES "include/*.hpp")
-file(GLOB SOURCE_FILES "src/Server/*.cpp" "src/main.cpp")
+file(GLOB SOURCE_FILES "src/Server/*.cpp")
 
 
 #add_executable(${PROJECT_NAME} ${INCLUDE_FILES} ${SOURCE_FILES})

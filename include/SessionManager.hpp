@@ -6,38 +6,45 @@
 
 #include "FileLogger.hpp"
 
-#include <boost/shared_ptr.hpp>
-#include <boost/unordered_set.hpp>
+#include <boost/noncopyable.hpp>
+#include <boost/asio.hpp>
+
+#include <unordered_set>
 
 
 
 namespace http
 {
-	class Session;
+	using namespace boost::filesystem;
 
-	class SessionManager
+
+	
+	class session;
+
+	class session_manager : boost::noncopyable
 	{
 	public:
 
-		using session_ptr = boost::shared_ptr<Session>;
+		using socket_t = boost::asio::ip::tcp::socket;
+		using session_ptr = std::shared_ptr<session>;
 
-		SessionManager(const SessionManager&) = delete;
-		SessionManager& operator=(const SessionManager&) = delete;
 
-		SessionManager(const std::string& _path_to_log_directory);
-		SessionManager(SessionManager&&) = default;
-		SessionManager& operator=(SessionManager&&) = default;
 
-		void startNewSession(session_ptr _session_ptr) noexcept;
-		void closeSession(session_ptr _session_ptr) noexcept;
+		session_manager(session_manager&&) = default;
+		session_manager& operator=(session_manager&&) = default;
+
+		session_manager(const path& _path_to_log_directory);
+
+		void startNewSession(socket_t&& _session_socket);
+		void closeSession(session_ptr&& _session_ptr) noexcept;
 
 		void closeAllSessions() noexcept;
 
 	private:
 
-		FileLogger m_logger;
+		std::unordered_set<session_ptr> sessions_;
 
-		boost::unordered_set<session_ptr> m_opened_sessions;
+		file_logger logger_;
 
 	};
 }

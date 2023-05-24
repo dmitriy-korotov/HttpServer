@@ -9,29 +9,29 @@
 
 namespace http
 {
-	boost::unordered_map<FileLogger::SeverityLevel, std::string> FileLogger::m_string_view_sev_levels = {
-		{ FileLogger::SeverityLevel::Debug,		"DEBUG" },
-		{ FileLogger::SeverityLevel::Error,		"ERROR" },
-		{ FileLogger::SeverityLevel::Fatal,		"FATAL" },
-		{ FileLogger::SeverityLevel::Info,		"INFO" },
-		{ FileLogger::SeverityLevel::Trace,		"TRACE" },
-		{ FileLogger::SeverityLevel::Warning,	"WARNING" }
+	std::unordered_map<file_logger::SeverityLevel, std::string> file_logger::m_string_view_sev_levels = {
+		{ file_logger::SeverityLevel::Debug,		"DEBUG" },
+		{ file_logger::SeverityLevel::Error,		"ERROR" },
+		{ file_logger::SeverityLevel::Fatal,		"FATAL" },
+		{ file_logger::SeverityLevel::Info,			"INFO" },
+		{ file_logger::SeverityLevel::Trace,		"TRACE" },
+		{ file_logger::SeverityLevel::Warning,		"WARNING" }
 	};
 
 
 
-	FileLogger::FileLogger(const std::string& _file_name_for_logger, const std::string& _path_to_log_directory) noexcept
+	file_logger::file_logger(const std::string& _file_name_for_logger, const path& _path_to_log_directory) noexcept
 	{
-		m_path_to_log_file = _path_to_log_directory + '/' + _file_name_for_logger + ".log";
-		if (!createFile(_file_name_for_logger, _path_to_log_directory))
+		m_path_to_log_file = _path_to_log_directory / (_file_name_for_logger + ".log");
+		if (!createDirectory(_path_to_log_directory))
 		{
-			std::cerr << "ERROR: Can't create file: " << m_path_to_log_file << std::endl;
+			std::cerr << "ERROR: file_logger: Can't create file: " << m_path_to_log_file << std::endl;
 		}
 	}
 
 
 
-	bool FileLogger::createFile(const std::string& _file_name_for_logger, const std::string& _path_to_log_directory) noexcept
+	bool file_logger::createDirectory(const path& _path_to_log_directory) noexcept
 	{
 		boost::system::error_code _error;
 		boost::filesystem::create_directories(_path_to_log_directory, _error);
@@ -49,7 +49,7 @@ namespace http
 
 
 
-	void FileLogger::log(std::string&& _message, SeverityLevel _log_type) noexcept
+	void file_logger::log(std::string&& _message, SeverityLevel _log_type) noexcept
 	{
 		m_file_to_log.open(m_path_to_log_file, std::ios::app);
 		if (m_file_to_log.is_open())
@@ -61,7 +61,7 @@ namespace http
 		}
 		else
 		{
-			std::cerr << "ERROR: Can't open file: " << m_path_to_log_file << std::endl;
+			std::cerr << "ERROR: file_logger: Can't open file: " << m_path_to_log_file << std::endl;
 		}
 	}
 }
