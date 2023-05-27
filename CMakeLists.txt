@@ -46,6 +46,8 @@ add_executable(${PROJECT_NAME}
 		        include/SessionManager.hpp
         		src/Server/SessionManager.cpp
 
+			include/RequestHandle.hpp
+			src/Server/RequestHandle.cpp
 			include/ResponseGenerators.hpp
 			src/Server/ResponseGenerators.cpp
 

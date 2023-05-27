@@ -1,6 +1,7 @@
 #include "Session.hpp"
 
 #include "FileReader.hpp"
+#include "RequestHandle.hpp"
 #include "SessionManager.hpp"
 #include "HttpServer.hpp"
 
@@ -14,73 +15,50 @@
 
 
 
-constexpr uint8_t REQUEST_DEADLINE_TIME = 10;
-constexpr std::string_view SERVER_NAME = "Dmitriy.Korotov";
+static constexpr uint8_t REQUEST_DEADLINE_TIME = 10;
+static constexpr std::string_view SERVER_NAME = "Dmitriy.Korotov";
 
 
 
 namespace http
 {
-	static response_t __get_bad_response(const beast_http::status _status)
-	{
-		response_t _response;
-		_response.result(_status);
-		_response.keep_alive(false);
-		_response.set(beast_http::field::server, SERVER_NAME);
-		_response.prepare_payload();
-		return _response;
-	}
-
-
-
-
-
-	response_t session::request_handler(const request_t& _request) const
+	response_t session::request_handler(const request_t& _request) const noexcept try
 	{
 		response_t response_;
 		response_.keep_alive(false);
 
-		std::string request_target_(_request.target().begin(), _request.target().size());
-		size_t point_position = request_target_.find_last_of('.');
-		std::string extention = point_position < request_target_.length() ? request_target_.substr(point_position + 1, request_target_.length() - point_position) : "";
-
-		if (request_target_ == "/")
+		if (_request.method() == beast_http::verb::get)
 		{
-			response_.set(beast_http::field::content_type, "text/html");
-			file_reader file_reader_(server_.document_root_ / "templates" / "checkers.html");
-			
-			response_.body() = std::move(file_reader_.data());
-		}
-		else if (extention == "css")
-		{
-			response_.set(beast_http::field::content_type, "text/css");
-			file_reader file_reader_(server_.document_root_ / std::string(request_target_));
+			std::string _target = _request.target();
+			if (request::isPathToFile(_target))
+			{
+				size_t position_point_before_extention = _target.find_last_of('.') + 1;
+				std::string extention = _target.substr(position_point_before_extention, _target.length() - position_point_before_extention);
+				response_.set(beast_http::field::content_type, request::conventExtentionToContentType(extention));
 
-			response_.body() = std::move(file_reader_.data());
+				file_reader file_reader_(_target);
+				response_.body() = std::move(file_reader_.data());
+			}
+			else
+			{
+				auto handler_it = server_.URL_handlres_map_.find(_target);
+				if (handler_it == server_.URL_handlres_map_.end())
+				{
+					return request::getBadResponse(beast_http::status::not_found, SERVER_NAME.data());
+				}
+				response_ = handler_it->second(_request);
+			}
 		}
-		else if (extention == "js")
-		{
-			response_.set(beast_http::field::content_type, "text/javascript");
-			file_reader file_reader_(server_.document_root_ / std::string(request_target_));
-
-			response_.body() = std::move(file_reader_.data());
-		}
-		else if (extention == "png" || extention == "jpg" || extention == "jpeg" || extention == "ico")
-		{
-			response_.set(beast_http::field::content_type, "image/" + extention);
-			file_reader file_reader_(server_.document_root_ / std::string(request_target_));
-
-			response_.body() = std::move(file_reader_.data());
-		}
-		else
-		{
-			return __get_bad_response(beast_http::status::not_found);
-		}
-
 		response_.result(beast_http::status::ok);
+		response_.set(beast_http::field::server, SERVER_NAME.data());
+		response_.set(beast_http::field::accept_datetime, request::getTimeNow());
 		response_.prepare_payload();
 
 		return response_;
+	}
+	catch (const std::exception& _ex)
+	{
+		return request::getBadResponse(beast_http::status::bad_gateway, SERVER_NAME.data());
 	}
 
 

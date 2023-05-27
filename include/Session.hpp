@@ -57,7 +57,7 @@ namespace http
 		void shedule_handle_of_request() noexcept;
 		void shedule_response(const request_t& _request) noexcept;
 
-		response_t request_handler(const request_t& _request) const;
+		response_t request_handler(const request_t& _request) const noexcept;
 
 	private:
 
