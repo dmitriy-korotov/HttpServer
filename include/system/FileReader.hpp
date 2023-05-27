@@ -2,6 +2,8 @@
 #ifndef FILE_READER_HPP
 #define FILE_READER_HPP
 
+#include "../http/Defines.hpp"
+
 #include <boost/filesystem/path.hpp>
 
 #include <fstream>
@@ -36,7 +38,7 @@ namespace http
 
 	private:
 
-		std::mutex mutex_;
+		mutable std::mutex mutex_;
 
 		std::optional<std::ifstream> file_;
 

@@ -1,6 +1,6 @@
-#include "SessionManager.hpp"
+#include "http/SessionManager.hpp"
 
-#include "Session.hpp"
+#include "http/Session.hpp"
 
 #include <iostream>
 
@@ -29,6 +29,7 @@ namespace http
 			return;
 		}
 		(*added_session.first)->start();
+		std::cout << "This thread: " << std::this_thread::get_id() << "\nSessions: " << sessions_.size() << std::endl;	// helper information
 	}
 
 

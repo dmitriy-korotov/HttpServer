@@ -31,28 +31,31 @@ file(GLOB SOURCE_FILES "src/Server/*.cpp")
 #add_executable(${PROJECT_NAME} ${INCLUDE_FILES} ${SOURCE_FILES})
 add_executable(${PROJECT_NAME} 
 
-                src/main.cpp
+	                src/main.cpp
 
-		        include/Defines.hpp
-			include/ResponseTypes.hpp
-		
-			include/FileReader.hpp
-			src/Server/FileReader.cpp
-		        include/FileLogger.hpp
-		        src/Server/FileLogger.cpp
+			include/system/Time.hpp
+			src/system/Time.cpp
+			include/system/FileReader.hpp
+			src/system/FileReader.cpp
+		        include/system/FileLogger.hpp
+		        src/system/FileLogger.cpp
+			
+			include/http/Defines.hpp
+			include/http/HttpTypes.hpp
 
-        		include/Session.hpp
-		        src/Server/Session.cpp
-		        include/SessionManager.hpp
-        		src/Server/SessionManager.cpp
+			include/http/Url.hpp
+			src/server/http/Url.cpp
+        		include/http/Session.hpp
+		        src/server/http/Session.cpp
+		        include/http/SessionManager.hpp
+        		src/server/http/SessionManager.cpp
+			include/http/ResponseTemplates.hpp
+			src/server/http/ResponseTemplates.cpp
+			include/http/ResponseGenerators.hpp
+			src/server/http/ResponseGenerators.cpp
 
-			include/RequestHandle.hpp
-			src/Server/RequestHandle.cpp
-			include/ResponseGenerators.hpp
-			src/Server/ResponseGenerators.cpp
-
-		        include/HttpServer.hpp
-		        src/Server/HttpServer.cpp
+		        include/http/HttpServer.hpp
+		        src/server/http/HttpServer.cpp
 
 )
 

@@ -1,8 +1,6 @@
-#include "HttpServer.hpp"
+#include "http/HttpServer.hpp"
 
 #include <boost/lexical_cast.hpp>
-
-#include <sstream>
 
 
 
@@ -63,7 +61,7 @@ namespace http
 	void http_server::setup_acceptor(const std::string& _address, uint16_t _port) try
 	{
 		ip::tcp::resolver _resolver(io_context_);
-		ip::tcp::endpoint _endpoint = *_resolver.resolve(_address, boost::lexical_cast<std::string>(_port)).begin();
+		endpoint_t _endpoint = *_resolver.resolve(_address, boost::lexical_cast<std::string>(_port)).begin();
 		acceptor_.open(_endpoint.protocol());
 		acceptor_.set_option(socket_base::reuse_address(true));
 		acceptor_.bind(_endpoint);

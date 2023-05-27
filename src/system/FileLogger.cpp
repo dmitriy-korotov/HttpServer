@@ -1,4 +1,4 @@
-#include "FileLogger.hpp"
+#include "system/FileLogger.hpp"
 
 #include <boost/filesystem/operations.hpp>
 
@@ -51,6 +51,7 @@ namespace http
 	void file_logger::log(std::string&& _message, severity_level _log_type) noexcept
 	{
 		std::lock_guard<std::mutex> lock(mutex_);
+
 		file_to_log_.open(path_to_log_file_, std::ios::app);
 		if (file_to_log_.is_open())
 		{

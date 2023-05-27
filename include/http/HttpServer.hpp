@@ -3,16 +3,16 @@
 #define HTTP_SERVER_HPP
 
 #include "Defines.hpp"
-#include "ResponseTypes.hpp"
-
+#include "HttpTypes.hpp"
 #include "SessionManager.hpp"
-#include "FileLogger.hpp"
+
+#include "../system/FileLogger.hpp"
 
 #include <boost/asio.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <boost/noncopyable.hpp>
 
-#include <iostream>
+#include <string>
 #include <functional>
 #include <unordered_map>
 
@@ -24,7 +24,6 @@ namespace http
 
 
 
-	using namespace response;
 	using namespace boost::asio;
 	using namespace boost::filesystem;
 
@@ -76,7 +75,7 @@ namespace http
 		path document_root_;
 		
 		session_manager session_manager_;
-		std::unordered_map<std::string_view, URLhandler> URL_handlres_map_;
+		std::unordered_map<std::string, URLhandler> URL_handlres_map_;
 		
 		file_logger logger_;
 

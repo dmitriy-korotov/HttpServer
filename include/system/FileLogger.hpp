@@ -2,7 +2,7 @@
 #ifndef FILE_LOGGER_HPP
 #define FILE_LOGGER_HPP
 
-#include "Defines.hpp"
+#include "../http/Defines.hpp"
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/noncopyable.hpp>
@@ -21,7 +21,7 @@ namespace http
 	{
 	public:
 
-		using file = boost::filesystem::ofstream;
+		using file = ofstream;
 
 
 
@@ -63,4 +63,4 @@ namespace http
 	};
 }
 
-#endif // FILE_LOGGER_HPP
+#endif // !FILE_LOGGER_HPP

@@ -1,4 +1,4 @@
-#include "FileReader.hpp"
+#include "system/FileReader.hpp"
 
 #include <boost/interprocess/file_mapping.hpp>
 #include <boost/interprocess/mapped_region.hpp>
@@ -12,7 +12,7 @@ namespace http
 		read(_path);
 	}
 
-	void file_reader::read(const path& _path) const 
+	void file_reader::read(const path& _path) const
 	{
 		__read_from_file(_path);
 	}
@@ -35,11 +35,14 @@ namespace http
 
 	void file_reader::reset() noexcept
 	{
+		std::lock_guard<std::mutex> lock(mutex_);
 		data_.clear();
 	}
 
 	void file_reader::__read_from_file(const path& _path) const
 	{
+		std::lock_guard<std::mutex> lock(mutex_);
+
 		boost::interprocess::mode_t mode = boost::interprocess::mode_t::read_only;
 		boost::interprocess::file_mapping file_(_path.c_str(), mode);
 

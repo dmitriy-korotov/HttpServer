@@ -3,16 +3,14 @@
 #define SESSION_HPP
 
 #include "Defines.hpp"
-
-#include "FileLogger.hpp"
-#include "HttpServer.hpp"
-#include "ResponseTypes.hpp"
+#include "HttpTypes.hpp"
 
 #include <boost/asio.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/beast/http/serializer.hpp>
 #include <boost/beast/http/parser.hpp>
 #include <boost/beast/core/flat_static_buffer.hpp>
+#include <boost/filesystem/path.hpp>
 
 #include <memory>
 
@@ -21,11 +19,12 @@
 namespace http
 {
 	class session_manager;
+	class http_server;
+	class file_logger;
 
 
 
 	namespace beast_http = boost::beast::http;
-	using namespace response;
 	using boost::filesystem::path;
 	
 	
@@ -66,7 +65,7 @@ namespace http
 		http_server& server_;
 		session_manager& session_manager_;
 
-		boost::asio::steady_timer request_deadline_ = { server_.acceptor_.get_executor(), (std::chrono::steady_clock::time_point::max)() };
+		boost::asio::steady_timer request_deadline_;
 
 		buffer_t read_stream_buffer_;
 
