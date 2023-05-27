@@ -25,7 +25,7 @@ namespace http
 
 
 
-		enum class SeverityLevel : uint8_t
+		enum class severity_level : uint8_t
 		{
 			Debug,
 			Info,
@@ -43,7 +43,7 @@ namespace http
 		file_logger(const std::string& _file_name_for_logger, const path& _path_to_log_directory) noexcept;
 		~file_logger() = default;
 
-		void log(std::string&& _message, SeverityLevel _log_type) noexcept;
+		void log(std::string&& _message, severity_level _log_type) noexcept;
 
 	private:
 
@@ -51,12 +51,14 @@ namespace http
 
 	private:
 
-		static std::unordered_map<SeverityLevel, std::string> m_string_view_sev_levels;
+		static std::unordered_map<severity_level, std::string> string_view_severity_levels_;
 
 	private:
 
-		path m_path_to_log_file;
-		file m_file_to_log;
+		std::mutex mutex_;
+
+		path path_to_log_file_;
+		file file_to_log_;
 		
 	};
 }

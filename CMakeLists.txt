@@ -34,7 +34,10 @@ add_executable(${PROJECT_NAME}
                 src/main.cpp
 
 		        include/Defines.hpp
+			include/ResponseTypes.hpp
 		
+			include/FileReader.hpp
+			src/Server/FileReader.cpp
 		        include/FileLogger.hpp
 		        src/Server/FileLogger.cpp
 
@@ -43,8 +46,8 @@ add_executable(${PROJECT_NAME}
 		        include/SessionManager.hpp
         		src/Server/SessionManager.cpp
 
-        		include/BasicHttpPacket.hpp
-		        src/Server/BasicHttpPacket.cpp
+			include/ResponseGenerators.hpp
+			src/Server/ResponseGenerators.cpp
 
 		        include/HttpServer.hpp
 		        src/Server/HttpServer.cpp

@@ -3,6 +3,7 @@
 #define HTTP_SERVER_HPP
 
 #include "Defines.hpp"
+#include "ResponseTypes.hpp"
 
 #include "SessionManager.hpp"
 #include "FileLogger.hpp"
@@ -12,11 +13,18 @@
 #include <boost/noncopyable.hpp>
 
 #include <iostream>
+#include <functional>
+#include <unordered_map>
 
 
 
 namespace http
 {
+	class session;
+
+
+
+	using namespace response;
 	using namespace boost::asio;
 	using namespace boost::filesystem;
 
@@ -26,10 +34,13 @@ namespace http
 	{
 	public:
 
+		friend session;
+
 		using acceptor_t = ip::tcp::acceptor;
 		using socket_t = ip::tcp::socket;
 		using endpoint_t = ip::tcp::endpoint;
 
+		using URLhandler = std::function<response_t(request_t)>;
 
 		
 		http_server(http_server&&) = default;
@@ -43,25 +54,29 @@ namespace http
 
 		void run();
 
-	protected:
+		void setPathToDocumentRoot(const path& _path_to_doc_root) noexcept;
+		bool registrateURLHandler(const std::string_view _URL, URLhandler&& _URL_handler);
+
+	private:
 
 		void setup_signals();
 		void setup_acceptor(const std::string& _address, uint16_t _port);
-		void shedule_accept();
-
+		
+		void shedule_accept() noexcept;
 		void shedule_await_stop() noexcept;
 
-	protected:
+	private:
 
 		io_context io_context_;
 		thread_pool thread_pool_;
-		
+
 		acceptor_t acceptor_;
 		signal_set signals_;
 		
 		path document_root_;
 		
 		session_manager session_manager_;
+		std::unordered_map<std::string_view, URLhandler> URL_handlres_map_;
 		
 		file_logger logger_;
 

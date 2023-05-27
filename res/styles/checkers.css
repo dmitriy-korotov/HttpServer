@@ -1,0 +1,86 @@
+/*
+    ALL
+*/
+
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+/*
+    BODY
+*/
+
+body {
+    background-image: url(../images/TreeImage.jpg);
+}
+
+/*
+    DESK
+*/
+
+#desk {
+    box-sizing: border-box;
+    padding: 5%;
+    background-image: url(../images/Border.png);
+    background-size: cover;
+    background-size: 105%;
+    background-position: center;
+
+    border: 3px solid black;
+    box-shadow: 10px 10px 30px rgb(0, 0, 0), -10px -10px 30px rgb(0, 0, 0);
+}
+
+/*
+    CHECKERS FIELD
+*/
+
+#field {
+    box-sizing: border-box;
+
+    width: 100%;
+    height: 100%;
+
+    border: 3px solid black;
+}
+
+.row {
+    display: flex;
+    height: 12.5%;
+}
+
+.ceil {
+    width: 12.5%;
+    box-sizing: border-box;
+}
+
+.selected {
+    background-color: rgb(117, 255, 191);
+    border: 1px solid rgb(0, 111, 74);
+}
+
+.black { background-color: black; }
+.white { background-color: white; }
+
+.checker {
+    width: 100%;
+    height: 100%;
+
+    background-size: cover;
+}
+
+.black-checker {
+    background-image: url(../images/BlackChecker.png);
+}
+
+.black-checker-king {
+    background-image: url(../images/BlackChekerKing.png);
+}
+
+.white-checker {
+    background-image: url(../images/WhiteCheker.png);
+}
+
+.white-checker-king {
+    background-image: url(../images/WhiteChekerKing.png);
+}

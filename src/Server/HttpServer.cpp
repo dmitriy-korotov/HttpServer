@@ -19,7 +19,7 @@ namespace http
 			, signals_(io_context_)
 			, document_root_(_path_to_documents_root)
 			, logger_(DEFAULT_FILE_LOGGER_NAME.data(), _path_to_log_root)
-			, session_manager_(_path_to_log_root)
+			, session_manager_(*this, _path_to_log_root)
 	{ 
 		setup_acceptor(_address, _port);
 	}
@@ -36,7 +36,7 @@ namespace http
 	}
 	catch (const std::exception& _ex)
 	{
-		logger_.log("Can't run server: " + std::string(_ex.what()), file_logger::SeverityLevel::Fatal);
+		logger_.log("Can't run server: " + std::string(_ex.what()), file_logger::severity_level::Fatal);
 		throw;
 	}
 
@@ -47,14 +47,14 @@ namespace http
 		signals_.add(SIGINT);
 		signals_.add(SIGTERM);
 #ifdef SIGQUIT
-		signals_.add(SIGQUIT)
+		signals_.add(SIGQUIT);
 #endif // SIGQUIT
 
-
+		shedule_await_stop();
 	}
 	catch (const std::exception& _ex)
 	{
-		logger_.log("Can't setup signals: " + std::string(_ex.what()), file_logger::SeverityLevel::Fatal);
+		logger_.log("Can't setup signals: " + std::string(_ex.what()), file_logger::severity_level::Fatal);
 		throw;
 	}
 
@@ -73,7 +73,7 @@ namespace http
 	}
 	catch (const std::exception& _ex)
 	{
-		logger_.log("Setup acceptor error: " + std::string(_ex.what()), file_logger::SeverityLevel::Fatal);
+		logger_.log("Setup acceptor error: " + std::string(_ex.what()), file_logger::severity_level::Fatal);
 		throw;
 	}
 
@@ -82,8 +82,13 @@ namespace http
 	void http_server::shedule_await_stop() noexcept
 	{
 		signals_.async_wait(
-			[this]()
+			[this](boost::system::error_code _error, [[maybe_unused]] int _signo) -> void
 			{
+				if (_error)
+				{
+					logger_.log("Signals stop error: " + _error.message(), file_logger::severity_level::Error);
+				}
+				logger_.log("Server finished.", file_logger::severity_level::Info);
 				acceptor_.close();
 				session_manager_.closeAllSessions();
 			});
@@ -107,10 +112,30 @@ namespace http
 				}
 				else
 				{
-					logger_.log("Accept error: " + _error.message(), file_logger::SeverityLevel::Error);
+					logger_.log("Accept error: " + _error.message(), file_logger::severity_level::Error);
 				}
 
 				shedule_accept();
 			});
+	}
+
+
+
+	void http_server::setPathToDocumentRoot(const path& _path_to_doc_root) noexcept
+	{
+		document_root_ = _path_to_doc_root;
+	}
+
+
+
+	bool http_server::registrateURLHandler(const std::string_view _URL, URLhandler&& _URL_handler)
+	{
+		auto it = URL_handlres_map_.emplace(_URL, std::move(_URL_handler));
+		if (!it.second)
+		{
+			logger_.log("Can't registrate handler for this URL: " + std::string(_URL), file_logger::severity_level::Error);
+			return false;
+		}
+		return true;
 	}
 }

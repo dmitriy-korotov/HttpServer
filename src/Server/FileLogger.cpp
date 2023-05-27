@@ -2,30 +2,29 @@
 
 #include <boost/filesystem/operations.hpp>
 
-#include <cassert>
 #include <iostream>
 
 
 
 namespace http
 {
-	std::unordered_map<file_logger::SeverityLevel, std::string> file_logger::m_string_view_sev_levels = {
-		{ file_logger::SeverityLevel::Debug,		"DEBUG" },
-		{ file_logger::SeverityLevel::Error,		"ERROR" },
-		{ file_logger::SeverityLevel::Fatal,		"FATAL" },
-		{ file_logger::SeverityLevel::Info,			"INFO" },
-		{ file_logger::SeverityLevel::Trace,		"TRACE" },
-		{ file_logger::SeverityLevel::Warning,		"WARNING" }
+	std::unordered_map<file_logger::severity_level, std::string> file_logger::string_view_severity_levels_ = {
+		{ file_logger::severity_level::Debug,		"DEBUG"   },
+		{ file_logger::severity_level::Error,		"ERROR"   },
+		{ file_logger::severity_level::Fatal,		"FATAL"   },
+		{ file_logger::severity_level::Info,		"INFO"    },
+		{ file_logger::severity_level::Trace,		"TRACE"   },
+		{ file_logger::severity_level::Warning,		"WARNING" }
 	};
 
 
 
 	file_logger::file_logger(const std::string& _file_name_for_logger, const path& _path_to_log_directory) noexcept
 	{
-		m_path_to_log_file = _path_to_log_directory / (_file_name_for_logger + ".log");
+		path_to_log_file_ = _path_to_log_directory / (_file_name_for_logger + ".log");
 		if (!createDirectory(_path_to_log_directory))
 		{
-			std::cerr << "ERROR: file_logger: Can't create file: " << m_path_to_log_file << std::endl;
+			std::cerr << "ERROR: file_logger: Can't create file: " << path_to_log_file_ << std::endl;
 		}
 	}
 
@@ -35,10 +34,10 @@ namespace http
 	{
 		boost::system::error_code _error;
 		boost::filesystem::create_directories(_path_to_log_directory, _error);
-		m_file_to_log.open(m_path_to_log_file, std::ios::out | std::ofstream::trunc);
-		if (m_file_to_log.is_open())
+		file_to_log_.open(path_to_log_file_, std::ios::out | std::ofstream::trunc);
+		if (file_to_log_.is_open())
 		{
-			m_file_to_log.close();
+			file_to_log_.close();
 		}
 		else
 		{
@@ -49,19 +48,20 @@ namespace http
 
 
 
-	void file_logger::log(std::string&& _message, SeverityLevel _log_type) noexcept
+	void file_logger::log(std::string&& _message, severity_level _log_type) noexcept
 	{
-		m_file_to_log.open(m_path_to_log_file, std::ios::app);
-		if (m_file_to_log.is_open())
+		std::lock_guard<std::mutex> lock(mutex_);
+		file_to_log_.open(path_to_log_file_, std::ios::app);
+		if (file_to_log_.is_open())
 		{
 			auto time_point_now = std::chrono::system_clock::now();
 			auto time = std::chrono::system_clock::to_time_t(time_point_now);
-			m_file_to_log << m_string_view_sev_levels[_log_type] << ": " << _message << "\t\t\t" << std::ctime(&time) << '\n';
-			m_file_to_log.close();
+			file_to_log_ << string_view_severity_levels_[_log_type] << ":\t\t\t" << std::ctime(&time) << '\n' << _message << '\n';
+			file_to_log_.close();
 		}
 		else
 		{
-			std::cerr << "ERROR: file_logger: Can't open file: " << m_path_to_log_file << std::endl;
+			std::cerr << "ERROR: file_logger: Can't open file: " << path_to_log_file_ << std::endl;
 		}
 	}
 }

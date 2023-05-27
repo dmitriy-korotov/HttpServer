@@ -7,7 +7,7 @@
 
 
 static constexpr std::string_view _default_server_address = "127.0.0.1";
-static constexpr uint16_t _default_server_port = 8000;
+static constexpr uint16_t _default_server_port = 80;
 
 static constexpr std::string_view _default_server_document_root = "C:/Users/User/MyProjects/HttpServer/res/";
 static constexpr std::string_view _default_server_log_root = "C:/Users/User/MyProjects/HttpServer/log/";
