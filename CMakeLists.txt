@@ -43,6 +43,11 @@ add_executable(${PROJECT_NAME}
 			include/http/Defines.hpp
 			include/http/HttpTypes.hpp
 
+			include/http/Request.hpp
+			include/http/Response.hpp
+			
+			include/http/QueryStringParser.hpp
+			src/server/http/QueryStringParser.cpp
 			include/http/Url.hpp
 			src/server/http/Url.cpp
         		include/http/Session.hpp

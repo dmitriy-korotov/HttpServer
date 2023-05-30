@@ -57,7 +57,7 @@ namespace http
 		{
 			auto time_point_now = std::chrono::system_clock::now();
 			auto time = std::chrono::system_clock::to_time_t(time_point_now);
-			file_to_log_ << string_view_severity_levels_[_log_type] << ":\t\t\t" << std::ctime(&time) << '\n' << _message << '\n';
+			file_to_log_ << string_view_severity_levels_[_log_type] << ":\t\t\t" << std::ctime(&time) << _message << "\n\n";
 			file_to_log_.close();
 		}
 		else

@@ -19,6 +19,15 @@ namespace http::request::url
 
 
 
+
+
+	bool isPathToSourceFile(const std::string_view& _target)
+	{
+		return (_target.find_last_of('.') < _target.size());
+	}
+
+
+
 	std::string convertExtentionToContentType(const std::string_view& _extention)
 	{
 		return std::string(extention_to_content_type_map_.at(_extention));

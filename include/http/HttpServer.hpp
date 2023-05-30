@@ -16,7 +16,8 @@
 #include <functional>
 #include <unordered_map>
 
-
+#include "http/Request.hpp"
+#include "http/Response.hpp"
 
 namespace http
 {
@@ -39,7 +40,7 @@ namespace http
 		using socket_t = ip::tcp::socket;
 		using endpoint_t = ip::tcp::endpoint;
 
-		using URLhandler = std::function<response_t(request_t)>;
+		using URLhandler = std::function<Response<body_t, fields_t>(Request<body_t, fields_t>)>;
 
 		
 		http_server(http_server&&) = default;

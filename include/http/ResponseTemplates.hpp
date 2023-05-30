@@ -9,6 +9,7 @@
 
 namespace http::response::templates
 {
+	std::string to_string(beast_http::status _status);
 	response_t getBadResponse(const beast_http::status _status, const std::string& _server_name);
 }
 

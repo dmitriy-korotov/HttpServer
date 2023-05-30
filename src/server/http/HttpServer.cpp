@@ -1,10 +1,33 @@
 #include "http/HttpServer.hpp"
 
+#include "http/Request.hpp"
+#include "http/Response.hpp"
+#include "http/ResponseGenerators.hpp"
+
 #include <boost/lexical_cast.hpp>
+
+#include <iostream>
 
 
 
 static constexpr std::string_view DEFAULT_FILE_LOGGER_NAME = "ServerLog";
+
+
+
+
+static http::Response<http::body_t, http::fields_t> testHandler(const http::Request<http::body_t, http::fields_t>& _request)
+{
+	auto get = _request.GET();
+
+	std::cout << "Query params: " << get.size() << std::endl;
+
+	for (const auto& item : get)
+	{
+		std::cout << item.first << '=' << item.second<< std::endl;
+	}
+	return http::response::renderTemplate("templates/checkers.html");
+}
+
 
 
 
@@ -26,6 +49,8 @@ namespace http
 
 	void http_server::run() try
 	{
+		registrateURLHandler("/test", testHandler);
+
 		for (size_t i = 0; i < std::thread::hardware_concurrency(); ++i)
 		{
 			post(thread_pool_, [this]() { io_context_.run(); });
