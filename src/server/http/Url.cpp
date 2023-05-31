@@ -32,4 +32,12 @@ namespace http::request::url
 	{
 		return std::string(extention_to_content_type_map_.at(_extention));
 	}
+
+
+
+	std::string parseRelativePath(const std::string_view& _target)
+	{
+		size_t question_position = _target.find_first_of('?');
+		return (question_position < _target.length()) ? std::string(_target.substr(0, question_position)) : std::string(_target);
+	}
 }

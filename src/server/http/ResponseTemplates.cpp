@@ -20,7 +20,8 @@ namespace http::response::templates
 		{ beast_http::status::bad_gateway,					"Bad gateway" },
 		{ beast_http::status::bad_request,					"Bad request" },
 		{ beast_http::status::too_many_requests,			"Too many requests" },
-		{ beast_http::status::client_closed_request,		"Client closed request" }
+		{ beast_http::status::client_closed_request,		"Client closed request" },
+		{ beast_http::status::service_unavailable,			"Service unavailable" }
 	};
 
 

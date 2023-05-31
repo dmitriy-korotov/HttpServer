@@ -13,7 +13,6 @@
 #include <boost/beast/http/write.hpp>
 #include <boost/beast/http/message.hpp>
 #include <boost/beast/http/status.hpp>
-#include <boost/url/parse.hpp>
 
 #include <iostream>
 #include <sstream>
@@ -172,8 +171,8 @@ namespace http
 			}
 			else
 			{
-				std::string _path = boost::urls::parse_origin_form(_target)->segments().buffer().data();
-				auto handler_it = server_.URL_handlres_map_.find("/test");
+				auto path_without_query_string = request::url::parseRelativePath(_target);
+				auto handler_it = server_.URL_handlres_map_.find(path_without_query_string);
 				if (handler_it == server_.URL_handlres_map_.end())
 				{
 					return response::templates::getBadResponse(beast_http::status::not_found, SERVER_NAME.data());
@@ -191,6 +190,6 @@ namespace http
 	}
 	catch (const std::exception& _ex)
 	{
-		return response::templates::getBadResponse(beast_http::status::bad_gateway, SERVER_NAME.data());
+		return response::templates::getBadResponse(beast_http::status::service_unavailable, SERVER_NAME.data());
 	}
 }
