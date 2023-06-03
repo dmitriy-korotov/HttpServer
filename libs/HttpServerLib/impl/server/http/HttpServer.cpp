@@ -15,7 +15,7 @@ static constexpr std::string_view DEFAULT_FILE_LOGGER_NAME = "ServerLog";
 
 
 
-static http::Response<http::body_t, http::fields_t> testHandler(const http::Request<http::body_t, http::fields_t>& _request)
+static http::response_t testHandler(const http::request_t& _request)
 {
 	auto get = _request.GET();
 

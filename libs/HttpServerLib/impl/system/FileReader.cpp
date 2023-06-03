@@ -12,10 +12,14 @@ namespace http
 		read(_path);
 	}
 
+
+
 	void file_reader::read(const path& _path) const
 	{
 		__read_from_file(_path);
 	}
+
+
 
 	std::string& file_reader::read(const path& _path)
 	{
@@ -23,21 +27,29 @@ namespace http
 		return data_;
 	}
 
+
+
 	std::string file_reader::data() const noexcept
 	{
 		return data_;
 	}
+
+
 
 	std::string& file_reader::data() noexcept
 	{
 		return data_;
 	}
 
+
+
 	void file_reader::reset() noexcept
 	{
 		std::lock_guard<std::mutex> lock(mutex_);
 		data_.clear();
 	}
+
+
 
 	void file_reader::__read_from_file(const path& _path) const
 	{

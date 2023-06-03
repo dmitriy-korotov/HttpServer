@@ -25,38 +25,10 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/boost_1_82_0/bin/x64/lib)
 
 
 
-add_library(${PROJECT_NAME}
+file(GLOB HEADERS include/http/*.hpp include/system/*.hpp)
+file(GLOB SOURCES impl/server/http/*.cpp impl/system/*.cpp)
 
-			include/system/Time.hpp
-			impl/system/Time.cpp
-			include/system/FileReader.hpp
-			impl/system/FileReader.cpp
-		    include/system/FileLogger.hpp
-		    impl/system/FileLogger.cpp
-			
-			include/http/Defines.hpp
-			include/http/HttpTypes.hpp
-
-			include/http/Request.hpp
-			include/http/Response.hpp
-			
-			include/http/QueryStringParser.hpp
-			impl/server/http/QueryStringParser.cpp
-			include/http/Url.hpp
-			impl/server/http/Url.cpp
-        	include/http/Session.hpp
-		    impl/server/http/Session.cpp
-		    include/http/SessionManager.hpp
-        	impl/server/http/SessionManager.cpp
-			include/http/ResponseTemplates.hpp
-			impl/server/http/ResponseTemplates.cpp
-			include/http/ResponseGenerators.hpp
-			impl/server/http/ResponseGenerators.cpp
-
-		    include/http/HttpServer.hpp
-		    impl/server/http/HttpServer.cpp
-
-)
+add_library(${PROJECT_NAME} ${HEADERS} ${SOURCES})
 
 
 

@@ -1,6 +1,4 @@
 #pragma once
-#ifndef PRESPONSE_GENERATORS_HPP
-#define PRESPONSE_GENERATORS_HPP
 
 #include <http/Defines.hpp>
 #include <http/HttpTypes.hpp>
@@ -33,5 +31,3 @@ namespace http::response
 	response_t createResponseJSON(std::string&& _string_response);
 	response_t createResponseXML(std::string&& _string_response);
 }
-
-#endif // !PRESPONSE_GENERATORS_HPP

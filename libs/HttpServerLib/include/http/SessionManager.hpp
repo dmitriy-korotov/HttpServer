@@ -1,8 +1,7 @@
 #pragma once
-#ifndef SESSION_MANAGER_HPP
-#define SESSION_MANAGER_HPP
 
 #include <http/Defines.hpp>
+#include <http/HttpServer_fwd.hpp>
 
 #include <system/FileLogger.hpp>
 
@@ -15,10 +14,6 @@
 
 namespace http
 {
-	class http_server;
-
-
-
 	using namespace boost::filesystem;
 
 
@@ -56,5 +51,3 @@ namespace http
 
 	};
 }
-
-#endif // !SESSION_MANAGER_HPP

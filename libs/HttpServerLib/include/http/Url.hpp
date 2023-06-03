@@ -1,8 +1,4 @@
 #pragma once
-#ifndef URL_HPP
-#define URL_HPP
-
-#include <http/Defines.hpp>
 
 #include <string>
 
@@ -16,5 +12,3 @@ namespace http::request::url
 	
 	std::string parseRelativePath(const std::string_view& _target);
 }
-
-#endif // !URL_HPP

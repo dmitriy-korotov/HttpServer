@@ -1,12 +1,8 @@
 #pragma once
-#ifndef REQUEST_HPP
-#define REQUEST_HPP
 
-#include <http/Defines.hpp>
 #include <http/QueryStringParser.hpp>
 
 #include <boost/beast/http/message.hpp>
-#include <boost/url/parse.hpp>
 
 #include <string>
 #include <unordered_map>
@@ -137,5 +133,3 @@ namespace http
 		return query_string_;
 	}
 }
-
-#endif // !REQUEST_HPP

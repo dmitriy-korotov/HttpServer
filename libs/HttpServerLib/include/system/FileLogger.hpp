@@ -1,8 +1,4 @@
 #pragma once
-#ifndef FILE_LOGGER_HPP
-#define FILE_LOGGER_HPP
-
-#include <http/Defines.hpp>
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/noncopyable.hpp>
@@ -61,6 +57,8 @@ namespace http
 		file file_to_log_;
 		
 	};
-}
 
-#endif // !FILE_LOGGER_HPP
+
+
+	using flogger = file_logger;
+}

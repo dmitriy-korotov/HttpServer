@@ -16,12 +16,12 @@ namespace http::response::templates
 
 	static const std::unordered_map<beast_http::status, std::string_view> status_to_string_map_ =
 	{
-		{ beast_http::status::not_found,					"Not found" },
-		{ beast_http::status::bad_gateway,					"Bad gateway" },
-		{ beast_http::status::bad_request,					"Bad request" },
-		{ beast_http::status::too_many_requests,			"Too many requests" },
-		{ beast_http::status::client_closed_request,		"Client closed request" },
-		{ beast_http::status::service_unavailable,			"Service unavailable" }
+		{ beast_http::status::not_found,					"Not found 404" },
+		{ beast_http::status::bad_gateway,					"Bad gateway 502" },
+		{ beast_http::status::bad_request,					"Bad request 400" },
+		{ beast_http::status::too_many_requests,			"Too many requests 429" },
+		{ beast_http::status::client_closed_request,		"Client closed request 499" },
+		{ beast_http::status::service_unavailable,			"Service unavailable 503" }
 	};
 
 
@@ -47,9 +47,9 @@ namespace http::response::templates
 
 
 
-	response_t getBadResponse(const beast_http::status _status, const std::string& _server_name)
+	boost_response_t getBadResponse(const beast_http::status _status, const std::string& _server_name)
 	{
-		response_t _response;
+		boost_response_t _response;
 		_response.result(_status);
 		_response.keep_alive(false);
 		_response.set(beast_http::field::server, _server_name);

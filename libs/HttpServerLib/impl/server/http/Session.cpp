@@ -1,8 +1,11 @@
 #include <http/Session.hpp>
+
 #include <system/FileLogger.hpp>
 #include <system/FileReader.hpp>
 #include <system/Time.hpp>
 
+#include <http/Request.hpp>
+#include <http/Response.hpp>
 #include <http/SessionManager.hpp>
 #include <http/HttpServer.hpp>
 #include <http/ResponseTemplates.hpp>
@@ -123,7 +126,7 @@ namespace http
 
 
 
-	void session::shedule_response(const request_t& _request) noexcept try
+	void session::shedule_response(const boost_request_t& _request) noexcept try
 	{
 		if (!socket_.is_open())
 		{
@@ -152,9 +155,9 @@ namespace http
 
 
 
-	response_t session::request_handler(const request_t& _request) const noexcept try
+	boost_response_t session::request_handler(const boost_request_t& _request) const noexcept try
 	{
-		response_t response_;
+		boost_response_t response_;
 
 		if (_request.method() == beast_http::verb::get)
 		{

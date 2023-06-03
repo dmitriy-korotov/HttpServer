@@ -1,10 +1,10 @@
 #pragma once
-#ifndef HTTP_SERVER_HPP
-#define HTTP_SERVER_HPP
 
 #include <http/Defines.hpp>
 #include <http/HttpTypes.hpp>
 #include <http/SessionManager.hpp>
+
+#include <http/Session_fwd.hpp>
 
 #include <system/FileLogger.hpp>
 
@@ -20,10 +20,6 @@
 
 namespace http
 {
-	class session;
-
-
-
 	using namespace boost::asio;
 	using namespace boost::filesystem;
 
@@ -39,7 +35,7 @@ namespace http
 		using socket_t = ip::tcp::socket;
 		using endpoint_t = ip::tcp::endpoint;
 
-		using URLhandler = std::function<Response<body_t, fields_t>(Request<body_t, fields_t>)>;
+		using URLhandler = std::function<response_t(request_t)>;
 
 		
 		http_server(http_server&&) = default;
@@ -81,5 +77,3 @@ namespace http
 
 	};
 }
-
-#endif // !HTTP_SERVER_HPP

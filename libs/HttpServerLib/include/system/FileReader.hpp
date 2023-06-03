@@ -1,8 +1,4 @@
 #pragma once
-#ifndef FILE_READER_HPP
-#define FILE_READER_HPP
-
-#include <http/Defines.hpp>
 
 #include <boost/filesystem/path.hpp>
 
@@ -45,7 +41,8 @@ namespace http
 		mutable std::string data_;
 
 	};
+
+
+
+	using freader = file_reader;
 }
-
-#endif // !FILE_READER_HPP
-

@@ -1,8 +1,4 @@
 #pragma once
-#ifndef QUERY_STRING_PARSER_HPP
-#define QUERY_STRING_PARSER_HPP
-
-#include <http/Defines.hpp>
 
 #include <string>
 #include <unordered_map>
@@ -40,5 +36,3 @@ namespace http::request::url
 
 	using QSparser = query_string_parser;
 }
-
-#endif // !QUERY_STRING_PARSER_HPP

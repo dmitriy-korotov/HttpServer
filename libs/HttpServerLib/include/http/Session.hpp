@@ -1,9 +1,11 @@
 #pragma once
-#ifndef SESSION_HPP
-#define SESSION_HPP
 
 #include <http/Defines.hpp>
 #include <http/HttpTypes.hpp>
+
+#include <http/SessionManager_fwd.hpp>
+#include <http/HttpServer_fwd.hpp>
+#include <system/FileLogger_fwd.hpp>
 
 #include <boost/asio.hpp>
 #include <boost/noncopyable.hpp>
@@ -18,12 +20,6 @@
 
 namespace http
 {
-	class session_manager;
-	class http_server;
-	class file_logger;
-
-
-
 	namespace beast_http = boost::beast::http;
 	using boost::filesystem::path;
 	
@@ -54,9 +50,9 @@ namespace http
 
 		void check_deadline();
 		void shedule_handle_of_request() noexcept;
-		void shedule_response(const request_t& _request) noexcept;
+		void shedule_response(const boost_request_t& _request) noexcept;
 
-		response_t request_handler(const request_t& _request) const noexcept;
+		boost_response_t request_handler(const boost_request_t& _request) const noexcept;
 
 	private:
 
@@ -69,7 +65,7 @@ namespace http
 
 		buffer_t read_stream_buffer_;
 
-		std::optional<response_t> response_;
+		std::optional<boost_response_t> response_;
 		std::optional<request_parser_t> parser_;
 		std::optional<response_serializer_t> response_serializer_;
 
@@ -77,5 +73,3 @@ namespace http
 
 	};
 }
-
-#endif // SESSION_HPP

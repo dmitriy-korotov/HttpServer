@@ -1,5 +1,7 @@
 #include <http/ResponseGenerators.hpp>
 
+#include <http/Response.hpp>
+
 #include <system/FileReader.hpp>
 
 #include <unordered_map>

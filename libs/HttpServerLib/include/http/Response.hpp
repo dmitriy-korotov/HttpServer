@@ -1,8 +1,4 @@
 #pragma once
-#ifndef RESPONSE_HPP
-#define RESPONSE_HPP
-
-#include <http/Defines.hpp>
 
 #include <boost/beast/http/message.hpp>
 
@@ -87,5 +83,3 @@ namespace http
 		return static_cast<Parent_t&>(*this);
 	}
 }
-
-#endif // !RESPONSE_HPP
