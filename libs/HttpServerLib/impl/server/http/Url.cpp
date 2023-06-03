@@ -1,4 +1,5 @@
-#include "http/Url.hpp"
+#include <http/Url.hpp>
+#include <http/Defines.hpp>
 
 #include <unordered_map>
 
@@ -16,14 +17,14 @@ namespace http::request::url
 		{ "jpg",	"image/jpg" },
 		{ "ico",	"image/ico" }
 	};
-
+	
 
 
 
 
 	bool isPathToSourceFile(const std::string_view& _target)
 	{
-		return (_target.find_last_of('.') < _target.size());
+		return (_target.find_last_of('.') != std::string::npos);
 	}
 
 
@@ -38,6 +39,6 @@ namespace http::request::url
 	std::string parseRelativePath(const std::string_view& _target)
 	{
 		size_t question_position = _target.find_first_of('?');
-		return (question_position < _target.length()) ? std::string(_target.substr(0, question_position)) : std::string(_target);
+		return (question_position != std::string::npos) ? std::string(_target.substr(0, question_position)) : std::string(_target);
 	}
 }
