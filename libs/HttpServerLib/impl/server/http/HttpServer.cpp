@@ -42,6 +42,7 @@ namespace http
 			, logger_(DEFAULT_FILE_LOGGER_NAME.data(), _path_to_log_root)
 			, session_manager_(*this, _path_to_log_root)
 	{ 
+		setup_signals();
 		setup_acceptor(_address, _port);
 	}
 

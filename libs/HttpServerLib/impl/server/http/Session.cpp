@@ -16,6 +16,8 @@
 #include <boost/beast/http/message.hpp>
 #include <boost/beast/http/status.hpp>
 
+#include <boost/filesystem.hpp>
+
 #include <iostream>
 #include <sstream>
 
@@ -40,7 +42,7 @@ namespace http
 
 	void session::start() noexcept
 	{
-		check_deadline();
+		//check_deadline();
 		shedule_handle_of_request();
 	}
 
@@ -145,7 +147,7 @@ namespace http
 					logger_.log("Error send response: " + _error.message(), file_logger::severity_level::Error);
 					return;
 				}
-				shedule_handle_of_request();
+				//shedule_handle_of_request();
 			});
 	}
 	catch (const std::exception& _ex)
@@ -164,11 +166,16 @@ namespace http
 			std::string _target = _request.target();
 			if (request::url::isPathToSourceFile(_target))
 			{
-				size_t position_point_before_extention = _target.find_last_of('.') + 1;
-				std::string extention = _target.substr(position_point_before_extention, _target.length() - position_point_before_extention);
-				response_.set(beast_http::field::content_type, request::url::convertExtentionToContentType(extention));
+				if (!boost::filesystem::exists(server_.document_root_.concat(_target)))
+				{
+					logger_.log("File no exists: " + (server_.document_root_ / _target).string(), file_logger::severity_level::Warning);
+					return response::templates::getBadResponse(beast_http::status::not_found, SERVER_NAME.data());
+				}
 
-				file_reader file_reader_(server_.document_root_ / _target);
+				response_.set(beast_http::field::content_type,
+							  request::url::convertExtentionToContentType(boost::filesystem::extension(_target)));
+
+				file_reader file_reader_(server_.document_root_.concat(_target));
 				response_.body() = std::move(file_reader_.data());
 			}
 			else
