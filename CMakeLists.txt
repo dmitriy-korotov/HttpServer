@@ -13,8 +13,18 @@ project(${PROJECT_NAME} VERSION 1.0 LANGUAGES CXX)
 
 
 
+option(MY_LIBTESTING "Включить модульное тестирование" ON)
+option(MY_COVERAGE "Включить измерение покрытия кода тестами" OFF)
+
+if (NOT MY_LIBTESTING)
+    message(STATUS "Тестирование проекта HttpServer выключено")
+else()
+    add_subdirectory(tests)
+endif()
+
+
+
 add_subdirectory(libs/HttpServerLib)
-add_subdirectory(tests)
 link_directories(libs/HttpServerLib/external/boost_1_82_0/bin/x64/lib)
 
 
@@ -22,3 +32,26 @@ link_directories(libs/HttpServerLib/external/boost_1_82_0/bin/x64/lib)
 add_executable(${PROJECT_NAME} src/main.cpp)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC HttpServerLib)
+
+
+
+add_compile_options(
+    -Werror
+
+    -Wall
+    -Wextra
+    -Wpedantic
+
+    -Wcast-align
+    -Wcast-qual
+    -Wconversion
+    -Wctor-dtor-privacy
+    -Wenum-compare
+    -Wfloat-equal
+    -Wnon-virtual-dtor
+    -Wold-style-cast
+    -Woverloaded-virtual
+    -Wredundant-decls
+    -Wsign-conversion
+    -Wsign-promo
+)

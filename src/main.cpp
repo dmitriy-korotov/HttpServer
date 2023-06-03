@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     std::string _document_root = _default_server_document_root.data();
     std::string _log_root = _default_server_log_root.data();
 
-    std::cout << "You may input some parametrs: http_server.exe <address> <port> <path to document root> <path to log root>\n\n";
+    std::cout << "http_server.exe <address> <port> <path to document root> <path to log root>\n\n";
 
 
 

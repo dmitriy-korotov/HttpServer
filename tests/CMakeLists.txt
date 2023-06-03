@@ -18,6 +18,6 @@ link_directories(../libs/HttpServerLib/external/boost_1_82_0/bin/x64/lib)
 
 
 
-add_executable(${PROJECT_NAME} src/Test_1.cpp)
+add_executable(${PROJECT_NAME} src/QueryStringParserTest.cpp)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC HttpServerLib)

@@ -68,7 +68,7 @@ if (Boost_FOUND)
 else()
     message(STATUS "Boost version: ${Boost_VERSION}")
 	message(STATUS "Boost libraries: ${Boost_LIBRARIES}")
-    message(FATA_ERROR, "CAN'T FIND BOOST LIBRARIES")
+    message(FATAL_ERROR, "CAN'T FIND BOOST LIBRARIES")
 endif()
 
 
