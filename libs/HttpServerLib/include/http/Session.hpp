@@ -2,8 +2,8 @@
 #ifndef SESSION_HPP
 #define SESSION_HPP
 
-#include "Defines.hpp"
-#include "HttpTypes.hpp"
+#include <http/Defines.hpp>
+#include <http/HttpTypes.hpp>
 
 #include <boost/asio.hpp>
 #include <boost/noncopyable.hpp>

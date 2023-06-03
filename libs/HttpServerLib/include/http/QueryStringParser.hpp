@@ -2,6 +2,8 @@
 #ifndef QUERY_STRING_PARSER_HPP
 #define QUERY_STRING_PARSER_HPP
 
+#include <http/Defines.hpp>
+
 #include <string>
 #include <unordered_map>
 

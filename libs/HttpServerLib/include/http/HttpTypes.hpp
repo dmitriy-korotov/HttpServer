@@ -2,7 +2,10 @@
 #ifndef HTTP_TYPES_HPP
 #define HTTP_TYPES_HPP
 
-#include "Defines.hpp"
+#include <http/Defines.hpp>
+
+#include <http/Request.hpp>
+#include <http/Response.hpp>
 
 #include <boost/beast/http/string_body.hpp>
 #include <boost/beast/http/fields.hpp>

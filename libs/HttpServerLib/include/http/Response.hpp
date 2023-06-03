@@ -2,6 +2,8 @@
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
+#include <http/Defines.hpp>
+
 #include <boost/beast/http/message.hpp>
 
 

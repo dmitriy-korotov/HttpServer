@@ -2,7 +2,7 @@
 #ifndef FILE_LOGGER_HPP
 #define FILE_LOGGER_HPP
 
-#include "../http/Defines.hpp"
+#include <http/Defines.hpp>
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/noncopyable.hpp>

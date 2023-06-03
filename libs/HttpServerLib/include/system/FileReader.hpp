@@ -2,7 +2,7 @@
 #ifndef FILE_READER_HPP
 #define FILE_READER_HPP
 
-#include "../http/Defines.hpp"
+#include <http/Defines.hpp>
 
 #include <boost/filesystem/path.hpp>
 

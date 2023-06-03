@@ -2,9 +2,9 @@
 #ifndef SESSION_MANAGER_HPP
 #define SESSION_MANAGER_HPP
 
-#include "Defines.hpp"
+#include <http/Defines.hpp>
 
-#include "../system/FileLogger.hpp"
+#include <system/FileLogger.hpp>
 
 #include <boost/noncopyable.hpp>
 #include <boost/asio.hpp>

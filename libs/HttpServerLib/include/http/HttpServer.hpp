@@ -2,11 +2,11 @@
 #ifndef HTTP_SERVER_HPP
 #define HTTP_SERVER_HPP
 
-#include "Defines.hpp"
-#include "HttpTypes.hpp"
-#include "SessionManager.hpp"
+#include <http/Defines.hpp>
+#include <http/HttpTypes.hpp>
+#include <http/SessionManager.hpp>
 
-#include "../system/FileLogger.hpp"
+#include <system/FileLogger.hpp>
 
 #include <boost/asio.hpp>
 #include <boost/asio/thread_pool.hpp>
@@ -16,8 +16,7 @@
 #include <functional>
 #include <unordered_map>
 
-#include "http/Request.hpp"
-#include "http/Response.hpp"
+
 
 namespace http
 {

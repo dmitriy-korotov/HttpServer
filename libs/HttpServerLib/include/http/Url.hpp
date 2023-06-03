@@ -2,7 +2,7 @@
 #ifndef URL_HPP
 #define URL_HPP
 
-#include "Defines.hpp"
+#include <http/Defines.hpp>
 
 #include <string>
 

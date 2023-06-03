@@ -2,8 +2,8 @@
 #ifndef RESPONSE_TEMPLATES_HPP
 #define RESPONSE_TEMPLATES_HPP
 
-#include "Defines.hpp"
-#include "HttpTypes.hpp"
+#include <http/Defines.hpp>
+#include <http/HttpTypes.hpp>
 
 
 
