@@ -33,6 +33,15 @@ static http::response_t testGetHandler(const http::request_t& _request)
 
 static http::response_t testPostHandler(const http::request_t& _request)
 {
+	if (_request.method() == http::beast_http::verb::post)
+	{
+		for (const auto& item : _request)
+		{
+			std::cout << item.name() << " : " << item.value() << std::endl;
+		}
+		std::cout << _request.body() << std::endl;
+	}
+
 	return http::response::renderTemplate("C:/Users/User/MyProjects/HttpServer/res/templates/registration.html");
 }
 

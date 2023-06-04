@@ -12,7 +12,7 @@ namespace http::response::templates
 		"* {\nmargin: 0px;\npadding: 0px\n}\n"
 		"body {\ndisplay: grid;\nalign-items: center;\nalign-content: center;\nheight: 100%;\nwidth: 100%;\n"
 		"background-image: url('images/ErrorBg.jpeg');\nbackground-size: cover;\n}\n"
-		"#message {\nfont-size: 5em;\ntext-align: center;\n}\n";
+		"#message {\nfont-size: 5em;\ntext-align: center; background-color: #b3a6c2; padding: 15px; border: 3px solid black;\n}\n";
 
 	static const std::unordered_map<beast_http::status, std::string_view> status_to_string_map_ =
 	{

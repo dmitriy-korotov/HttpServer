@@ -151,39 +151,32 @@ namespace http
 	boost_response_t session::request_handler(const boost_request_t& _request) const noexcept try
 	{
 		boost_response_t response_;
-
-		if (_request.method() == beast_http::verb::get)
+		std::string _target = _request.target();
+		
+		if (_request.method() == beast_http::verb::get && request::url::isPathToSourceFile(_target))
 		{
-			std::string _target = _request.target();
-			if (request::url::isPathToSourceFile(_target))
+			auto path_to_file = server_.document_root_ / _target;
+			if (!boost::filesystem::exists(path_to_file))
 			{
-				auto path_to_file = server_.document_root_ / _target;
-				if (!boost::filesystem::exists(path_to_file))
-				{
-					logger_.log("File don't exists: " + path_to_file.string(), file_logger::severity_level::Warning);
-					return response::templates::getBadResponse(beast_http::status::not_found, SERVER_NAME.data());
-				}
-
-				response_.set(beast_http::field::content_type,
-							  request::url::convertExtentionToContentType(boost::filesystem::extension(_target)));
-
-				file_reader file_reader_(path_to_file);
-				response_.body() = std::move(file_reader_.data());
+				logger_.log("File don't exists: " + path_to_file.string(), file_logger::severity_level::Warning);
+				return response::templates::getBadResponse(beast_http::status::not_found, SERVER_NAME.data());
 			}
-			else
-			{
-				auto path_without_query_string = request::url::parseRelativePath(_target);
-				auto handler_it = server_.URL_handlres_map_.find(path_without_query_string);
-				if (handler_it == server_.URL_handlres_map_.end())
-				{
-					return response::templates::getBadResponse(beast_http::status::not_found, SERVER_NAME.data());
-				}
-				response_ = handler_it->second(_request);
-			}
+
+			response_.set(beast_http::field::content_type,
+							request::url::convertExtentionToContentType(boost::filesystem::extension(_target)));
+
+			file_reader file_reader_(path_to_file);
+			response_.body() = std::move(file_reader_.data());
 		}
 		else
 		{
-			return response::templates::getBadResponse(beast_http::status::bad_request, SERVER_NAME.data());
+			auto path_without_query_string = request::url::parseRelativePath(_target);
+			auto handler_it = server_.URL_handlres_map_.find(path_without_query_string);
+			if (handler_it == server_.URL_handlres_map_.end())
+			{
+				return response::templates::getBadResponse(beast_http::status::not_found, SERVER_NAME.data());
+			}
+			response_ = handler_it->second(_request);
 		}
 
 		response_.result(beast_http::status::ok);

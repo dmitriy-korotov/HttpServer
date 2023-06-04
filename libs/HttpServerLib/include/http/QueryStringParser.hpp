@@ -1,5 +1,7 @@
 #pragma once
 
+#include <util/KeyValueParser.hpp>
+
 #include <string>
 #include <unordered_map>
 
@@ -7,7 +9,7 @@
 
 namespace http::request::url
 {
-	class query_string_parser
+	class query_string_parser : public util::key_value_parser
 	{
 	public:
 
@@ -23,12 +25,9 @@ namespace http::request::url
 
 		void parse(const std::string_view& _target);
 
-		const query_string_t& get() const noexcept;
-		query_string_t& get() noexcept;
-
 	private:
 
-		query_string_t query_string_;
+		using util::key_value_parser::parse;
 
 	};
 

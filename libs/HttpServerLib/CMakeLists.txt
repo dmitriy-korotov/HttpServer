@@ -25,8 +25,8 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/boost_1_82_0/bin/x64/lib)
 
 
 
-file(GLOB HEADERS include/http/*.hpp include/system/*.hpp)
-file(GLOB SOURCES impl/server/http/*.cpp impl/system/*.cpp)
+file(GLOB HEADERS include/http/*.hpp include/system/*.hpp include/util/*.hpp)
+file(GLOB SOURCES impl/server/http/*.cpp impl/system/*.cpp impl/util/*.cpp)
 
 add_library(${PROJECT_NAME} ${HEADERS} ${SOURCES})
 
