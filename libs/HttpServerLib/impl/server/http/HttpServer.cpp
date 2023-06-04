@@ -43,7 +43,6 @@ namespace http
 			, logger_(DEFAULT_FILE_LOGGER_NAME.data(), _path_to_log_root)
 			, session_manager_(*this, _path_to_log_root)
 	{ 
-
 		logger_.log((boost::format("Server runing on address %1%:%2%") % _address % _port).str(), file_logger::severity_level::Info);
 
 		setup_signals();
@@ -153,6 +152,14 @@ namespace http
 	{
 		document_root_ = _path_to_doc_root;
 	}
+
+
+
+	const path& http_server::getPathToDocumentRoot() const noexcept
+	{
+		return document_root_;
+	}
+
 
 
 

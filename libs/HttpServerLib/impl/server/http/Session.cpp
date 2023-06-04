@@ -100,6 +100,7 @@ namespace http
 	}
 
 
+
 	void session::shedule_handle_of_request() noexcept try
 	{
 		parser_.emplace(std::piecewise_construct, std::make_tuple(), std::make_tuple());
@@ -138,7 +139,6 @@ namespace http
 					return;
 				}
 				shedule_handle_of_request();
-				//session_manager_.closeSession(std::move(self));
 			});
 	}
 	catch (const std::exception& _ex)

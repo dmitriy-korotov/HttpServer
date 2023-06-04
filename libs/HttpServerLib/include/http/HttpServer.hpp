@@ -52,7 +52,11 @@ namespace http
 		void setPathToDocumentRoot(const path& _path_to_doc_root) noexcept;
 		bool registrateURLHandler(const std::string_view _URL, URLhandler&& _URL_handler);
 
-	private:
+		const path& getPathToDocumentRoot() const noexcept;
+
+	protected:
+
+		virtual void setupUrlHandlers() {};
 
 		void setup_signals();
 		void setup_acceptor(const std::string& _address, uint16_t _port);
