@@ -9,10 +9,13 @@
 #include <system/FileLogger.hpp>
 
 #include <boost/asio.hpp>
+#include <boost/asio/ssl/context.hpp>
+#include <boost/asio/ssl/stream.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <boost/noncopyable.hpp>
 
 #include <string>
+#include <otional>
 #include <functional>
 #include <unordered_map>
 
@@ -34,6 +37,7 @@ namespace http
 		using acceptor_t = ip::tcp::acceptor;
 		using socket_t = ip::tcp::socket;
 		using endpoint_t = ip::tcp::endpoint;
+		using ssl_socket_t = ssl::stream<socket_t>;
 
 		using URLhandler = std::function<response_t(request_t)>;
 
@@ -58,6 +62,7 @@ namespace http
 
 		virtual void setupUrlHandlers() {};
 
+		void setup_ssl_verification();
 		void setup_signals();
 		void setup_acceptor(const std::string& _address, uint16_t _port);
 		
@@ -66,10 +71,13 @@ namespace http
 
 	private:
 
+		ssl::context ssl_context_;
 		io_context io_context_;
 		thread_pool thread_pool_;
 
 		acceptor_t acceptor_;
+		std::optional<ssl_socket_t> socket_;
+
 		signal_set signals_;
 		
 		path document_root_;

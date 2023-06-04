@@ -36,6 +36,7 @@ namespace http
 {
 	http_server::http_server(const std::string _address, uint16_t _port, const path& _path_to_documents_root, const path& _path_to_log_root)
 			: io_context_(1)
+			, ssl_context_(ssl::context::sslv23)
 			, thread_pool_()
 			, acceptor_(io_context_)
 			, signals_(io_context_)
@@ -45,6 +46,7 @@ namespace http
 	{ 
 		logger_.log((boost::format("Server runing on address %1%:%2%") % _address % _port).str(), file_logger::severity_level::Info);
 
+		setup_ssl_verification();
 		setup_signals();
 		setup_acceptor(_address, _port);
 	}
@@ -65,6 +67,19 @@ namespace http
 	{
 		logger_.log("Can't run server: " + std::string(_ex.what()), file_logger::severity_level::Fatal);
 		throw;
+	}
+
+
+
+	void http_server::setup_ssl_verification()
+	{
+		ssl_context_.set_options(ssl::context::default_workarounds
+							   | ssl::context::no_sslv2
+							   | ssl::context::single_dh_use);
+
+		ssl_context_.use_certificate_chain_file("https_server.pem");
+		ssl_context_.use_private_key_file("https_server.pem", ssl::context::pem);
+		ssl_context_.use_tmp_dh_file("dh512.pem");
 	}
 
 
@@ -125,8 +140,10 @@ namespace http
 
 	void http_server::shedule_accept() noexcept
 	{
+		socket_.emplace(std::piecewise_construct, io_context_, ssl_context_);
+
 		acceptor_.async_accept( 
-			[this](boost::system::error_code _error, socket_t _socket) -> void
+			[this](boost::system::error_code _error) -> void
 			{
 				if (!acceptor_.is_open())
 				{
@@ -135,7 +152,7 @@ namespace http
 
 				if (!_error)
 				{
-					session_manager_.startNewSession(std::move(_socket));
+					session_manager_.startNewSession(std::move(*socket_));
 				}
 				else
 				{

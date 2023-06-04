@@ -17,6 +17,7 @@
 #include <boost/beast/http/status.hpp>
 
 #include <boost/filesystem.hpp>
+#include <boost/bind.hpp>
 
 #include <iostream>
 #include <sstream>
@@ -30,7 +31,7 @@ static constexpr std::string_view SERVER_NAME = "Dmitriy.Korotov";
 
 namespace http
 {
-	session::session(socket_t&& _socket, http_server& _server, session_manager& _session_manager, file_logger& _logger)
+	session::session(ssl_socket_t&& _socket, http_server& _server, session_manager& _session_manager, file_logger& _logger)
 			: socket_(std::move(_socket))
 			, server_(_server)
 			, request_deadline_ { server_.acceptor_.get_executor(), (std::chrono::steady_clock::time_point::max)() }
@@ -42,8 +43,12 @@ namespace http
 
 	void session::start() noexcept
 	{
+
+		socket_.async_handshake(ssl::stream_base::server,
+							    boost::bind(&session::shedule_handle_of_request, this, boost::asio::placeholders::error));
+
 		check_deadline();
-		shedule_handle_of_request();
+		//shedule_handle_of_request();
 	}
 
 
@@ -51,7 +56,7 @@ namespace http
 	std::string session::info() const noexcept try
 	{
 		std::stringstream _info;
-		_info << socket_.remote_endpoint();
+		_info << socket_.lowest_layer().remote_endpoint();
 		return _info.str();
 	}
 	catch (const std::exception& _ex)
@@ -65,7 +70,7 @@ namespace http
 	void session::close() noexcept
 	{
 		boost::system::error_code _error;
-		socket_.close(_error);
+		socket_.lowest_layer().close(_error);
 		if (_error)
 		{
 			logger_.log("Closing session error: " + _error.message(), file_logger::severity_level::Error);

@@ -8,10 +8,12 @@
 #include <system/FileLogger_fwd.hpp>
 
 #include <boost/asio.hpp>
-#include <boost/noncopyable.hpp>
+#include <boost/asio/ssl/stream.hpp>
 #include <boost/beast/http/serializer.hpp>
 #include <boost/beast/http/parser.hpp>
 #include <boost/beast/core/flat_static_buffer.hpp>
+
+#include <boost/noncopyable.hpp>
 #include <boost/filesystem/path.hpp>
 
 #include <memory>
@@ -33,13 +35,14 @@ namespace http
 		using buffer_t =				boost::beast::flat_static_buffer<8192>;
 		using request_parser_t =		beast_http::request_parser<body_t, alloc_t>;
 		using response_serializer_t =	beast_http::response_serializer<body_t, fields_t>;
+		using ssl_socket_t =			ssl::stream<socket_t>;	
 
 
 
 		session(session&&) = default;
 		session& operator=(session&&) = default;
 
-		session(socket_t&& _socket, http_server& _server, session_manager& _session_manager, file_logger& _logger);
+		session(ssl_socket_t&& _socket, http_server& _server, session_manager& _session_manager, file_logger& _logger);
 
 		void start() noexcept;
 		void close() noexcept;
@@ -56,7 +59,7 @@ namespace http
 
 	private:
 
-		socket_t socket_;
+		ssl_socket_t socket_;
 
 		http_server& server_;
 		session_manager& session_manager_;
