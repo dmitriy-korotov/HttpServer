@@ -5,6 +5,7 @@
 #include <http/ResponseGenerators.hpp>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
 
 #include <iostream>
 
@@ -25,7 +26,7 @@ static http::response_t testHandler(const http::request_t& _request)
 	{
 		std::cout << item.first << '=' << item.second<< std::endl;
 	}
-	return http::response::renderTemplate("templates/checkers.html");
+	return http::response::renderTemplate("C:/Users/User/MyProjects/HttpServer/res/templates/checkers.html");
 }
 
 
@@ -42,6 +43,9 @@ namespace http
 			, logger_(DEFAULT_FILE_LOGGER_NAME.data(), _path_to_log_root)
 			, session_manager_(*this, _path_to_log_root)
 	{ 
+
+		logger_.log((boost::format("Server runing on address %1%:%2%") % _address % _port).str(), file_logger::severity_level::Info);
+
 		setup_signals();
 		setup_acceptor(_address, _port);
 	}

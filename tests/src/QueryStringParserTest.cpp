@@ -1,33 +1,30 @@
-#include <http/QueryStringParser.hpp>
-
-#define BOOST_TEST_MODULE QUERY_STRING_PARSER
+#define BOOST_TEST_MAIN
+#define BOOST_TEST_MODULE HTTP_TESTS
 #include <boost/test/unit_test.hpp>
 
+#include <http/QueryStringParser.hpp>
 
 
 
-BOOST_AUTO_TEST_CASE(QUERY_STRING_PARSER_TEST)
+BOOST_AUTO_TEST_SUITE(TestQueryStringParser)
+
+BOOST_AUTO_TEST_CASE(TWO_PARAMETRS)
 {
-	http::request::url::QSparser _parser1("localhost.com?name=Dima&surname=Korotov");
+	http::request::url::QSparser _parser("localhost.com?name=Dima&surname=Korotov");
 
-	auto& parsed_qs1 = _parser1.get();
+	auto& parsed_qs = _parser.get();
 
-	BOOST_TEST(parsed_qs1["name"] == "Dima");
-	BOOST_TEST(parsed_qs1["surname"] == "Korotov");
-
-
-
-	/*http::request::url::QSparser _parser2("localhost.com?");
-
-	auto& parsed_qs2 = _parser2.get();
-
-	BOOST_TEST(parsed_qs2.empty());
-
-
-
-	http::request::url::QSparser _parser3("localhost.com");
-
-	auto& parsed_qs3 = _parser3.get();
-
-	BOOST_TEST(parsed_qs3.empty());*/
+	BOOST_TEST(parsed_qs["name"] == "Dima");
+	BOOST_TEST(parsed_qs["surname"] == "Korotov");
 }
+
+BOOST_AUTO_TEST_CASE(ZERO_PARAMETRS)
+{
+	http::request::url::QSparser _parser("localhost.com?");
+
+	auto& parsed_qs = _parser.get();
+
+	BOOST_TEST(parsed_qs.empty());
+}
+
+BOOST_AUTO_TEST_SUITE_END()

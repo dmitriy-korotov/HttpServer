@@ -47,7 +47,7 @@ namespace http::response
 	response_t renderTemplate(const boost::filesystem::path& _path)
 	{
 		response_t _response;
-		_response.set(beast_http::field::content_type, "text/html");
+		_response.set(beast_http::field::content_type, resonse_content_types_.at(EResponseContentType::HTML));
 
 		file_reader _file_reader(_path);
 		_response.body() = std::move(_file_reader.data());

@@ -166,16 +166,16 @@ namespace http
 			std::string _target = _request.target();
 			if (request::url::isPathToSourceFile(_target))
 			{
-				if (!boost::filesystem::exists(server_.document_root_.concat(_target)))
+				if (!boost::filesystem::exists(server_.document_root_.string() + _target))
 				{
-					logger_.log("File no exists: " + (server_.document_root_ / _target).string(), file_logger::severity_level::Warning);
+					logger_.log("File don't exists: " + (server_.document_root_.string() + _target), file_logger::severity_level::Warning);
 					return response::templates::getBadResponse(beast_http::status::not_found, SERVER_NAME.data());
 				}
 
 				response_.set(beast_http::field::content_type,
 							  request::url::convertExtentionToContentType(boost::filesystem::extension(_target)));
 
-				file_reader file_reader_(server_.document_root_.concat(_target));
+				file_reader file_reader_(server_.document_root_.string() + _target);
 				response_.body() = std::move(file_reader_.data());
 			}
 			else

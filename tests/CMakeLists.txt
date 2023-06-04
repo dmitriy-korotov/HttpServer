@@ -13,11 +13,12 @@ project(${PROJECT_NAME} VERSION 1.0 LANGUAGES CXX)
 
 
 
-include_directories(../libs/HttpServerLib)
 link_directories(../libs/HttpServerLib/external/boost_1_82_0/bin/x64/lib)
 
 
 
-add_executable(${PROJECT_NAME} src/QueryStringParserTest.cpp)
+file(GLOB SOURCES src/*.cpp)
+
+add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC HttpServerLib)
