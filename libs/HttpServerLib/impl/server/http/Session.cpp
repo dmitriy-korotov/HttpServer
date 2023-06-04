@@ -42,7 +42,7 @@ namespace http
 
 	void session::start() noexcept
 	{
-		//check_deadline();
+		check_deadline();
 		shedule_handle_of_request();
 	}
 
@@ -81,7 +81,7 @@ namespace http
 			session_manager_.closeSession(shared_from_this());
 			return;
 		}
-		request_deadline_.expires_after(std::chrono::seconds(REQUEST_DEADLINE_TIME));
+		request_deadline_.expires_from_now(std::chrono::seconds(REQUEST_DEADLINE_TIME));
 
 		request_deadline_.async_wait(
 			[this](boost::system::error_code _error)
@@ -102,11 +102,6 @@ namespace http
 
 	void session::shedule_handle_of_request() noexcept try
 	{
-		if (!socket_.is_open())
-		{
-			return;
-		}
-
 		parser_.emplace(std::piecewise_construct, std::make_tuple(), std::make_tuple());
 		read_stream_buffer_.consume(read_stream_buffer_.size());
 
@@ -130,24 +125,20 @@ namespace http
 
 	void session::shedule_response(const boost_request_t& _request) noexcept try
 	{
-		if (!socket_.is_open())
-		{
-			return;
-		}
-
 		response_ = request_handler(_request);
 
 		response_serializer_.emplace(std::move(*response_));
 
 		beast_http::async_write(socket_, *response_serializer_,
-			[this, self = shared_from_this()](boost::system::error_code _error, [[maybe_unused]] size_t _bytes_transfered) -> void
+			[this, self = shared_from_this()](boost::system::error_code _error, [[maybe_unused]] size_t _bytes_transfered) mutable -> void
 			{
 				if (_error)
 				{
 					logger_.log("Error send response: " + _error.message(), file_logger::severity_level::Error);
 					return;
 				}
-				//shedule_handle_of_request();
+				shedule_handle_of_request();
+				//session_manager_.closeSession(std::move(self));
 			});
 	}
 	catch (const std::exception& _ex)
@@ -166,16 +157,17 @@ namespace http
 			std::string _target = _request.target();
 			if (request::url::isPathToSourceFile(_target))
 			{
-				if (!boost::filesystem::exists(server_.document_root_.string() + _target))
+				auto path_to_file = server_.document_root_ / _target;
+				if (!boost::filesystem::exists(path_to_file))
 				{
-					logger_.log("File don't exists: " + (server_.document_root_.string() + _target), file_logger::severity_level::Warning);
+					logger_.log("File don't exists: " + path_to_file.string(), file_logger::severity_level::Warning);
 					return response::templates::getBadResponse(beast_http::status::not_found, SERVER_NAME.data());
 				}
 
 				response_.set(beast_http::field::content_type,
 							  request::url::convertExtentionToContentType(boost::filesystem::extension(_target)));
 
-				file_reader file_reader_(server_.document_root_.string() + _target);
+				file_reader file_reader_(path_to_file);
 				response_.body() = std::move(file_reader_.data());
 			}
 			else
@@ -190,9 +182,8 @@ namespace http
 			}
 		}
 		response_.result(beast_http::status::ok);
-		response_.keep_alive(false);
+		response_.keep_alive(true);
 		response_.set(beast_http::field::server, SERVER_NAME.data());
-		response_.set(beast_http::field::accept_datetime, time::stringTimeNow());
 		response_.prepare_payload();
 
 		return response_;
