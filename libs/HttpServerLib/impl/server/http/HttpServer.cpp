@@ -16,7 +16,7 @@ static constexpr std::string_view DEFAULT_FILE_LOGGER_NAME = "ServerLog";
 
 
 
-static http::response_t testHandler(const http::request_t& _request)
+static http::response_t testGetHandler(const http::request_t& _request)
 {
 	auto get = _request.GET();
 
@@ -29,6 +29,12 @@ static http::response_t testHandler(const http::request_t& _request)
 	return http::response::renderTemplate("C:/Users/User/MyProjects/HttpServer/res/templates/checkers.html");
 }
 
+
+
+static http::response_t testPostHandler(const http::request_t& _request)
+{
+	return http::response::renderTemplate("C:/Users/User/MyProjects/HttpServer/res/templates/registration.html");
+}
 
 
 
@@ -53,7 +59,8 @@ namespace http
 
 	void http_server::run() try
 	{
-		registrateURLHandler("/test", testHandler);
+		registrateURLHandler("/test", testGetHandler);
+		registrateURLHandler("/registration", testPostHandler);
 
 		for (size_t i = 0; i < std::thread::hardware_concurrency(); ++i)
 		{

@@ -181,6 +181,11 @@ namespace http
 				response_ = handler_it->second(_request);
 			}
 		}
+		else
+		{
+			return response::templates::getBadResponse(beast_http::status::bad_request, SERVER_NAME.data());
+		}
+
 		response_.result(beast_http::status::ok);
 		response_.keep_alive(true);
 		response_.set(beast_http::field::server, SERVER_NAME.data());
