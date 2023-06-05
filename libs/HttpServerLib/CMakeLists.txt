@@ -9,11 +9,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(INCLUDE_DIRECTORIES include)
 
 
+
 set(Boost_USE_DEBUG_LIBS     	OFF)
 set(Boost_USE_RELEAS_LIBS    	ON)
 set(Boost_USE_MULTITHREADED  	ON)
 set(Boost_USE_STATIC_RUNTIME 	OFF)
 set(BOOST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/external/boost_1_82_0)
+
+
+
+#option(SANITIZERS "ON Sanitizers" ON)
 
 
 
@@ -73,3 +78,13 @@ add_compile_options(
     -Wsign-conversion
     -Wsign-promo
 )
+
+#[===[
+if (NOT SANITIZERS)
+	message(STATUS "Sanitizers ON")
+else()
+	add_compile_options(-fsanitize=address -fsanitize=fuzzer)
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=fuzzer -fsanitize=address")
+	set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=fuzzer -fsanitize=address")	
+endif()
+]===]
