@@ -190,6 +190,6 @@ namespace http
 	catch (const std::exception& _ex)
 	{
 		logger_.log("Request handler error: " + std::string(_ex.what()), file_logger::severity_level::Error);
-		return response::templates::getBadResponse(beast_http::status::service_unavailable, SERVER_NAME.data());
+		return response::templates::getBadResponse(beast_http::status::bad_request, SERVER_NAME.data());
 	}
 }

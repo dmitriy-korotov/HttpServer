@@ -16,18 +16,19 @@ namespace util
 		size_t start = 0;
 		while (start < _target.length())
 		{
-			size_t sep = _target.find_first_of(_key_value_separator, 0);
-			if (sep < _target.length())
+			size_t sep = _target.find_first_of(_key_value_separator, start);
+			if (sep == std::string::npos)
 			{
-				size_t finded_end_key_value = _target.find_first_of(_pair_separator, sep);
-				size_t end = finded_end_key_value < _target.length() ? finded_end_key_value : _target.length();
-
-				data_.emplace(
-					_target.substr(start + 1, sep - start - 1),
-					_target.substr(sep + 1, end - sep - 1));
-
-				start = end;
+				return;
 			}
+			size_t finded_end_key_value = _target.find_first_of(_pair_separator, sep);
+			size_t end = finded_end_key_value != std::string::npos ? finded_end_key_value : _target.length();
+
+			data_.emplace(
+				_target.substr(start, sep - start),
+				_target.substr(sep + 1, end - sep - 1));
+
+			start = end;
 		}
 	}
 
