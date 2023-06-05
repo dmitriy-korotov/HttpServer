@@ -42,7 +42,7 @@ namespace http
 
 	void session::start() noexcept
 	{
-		check_deadline();
+		//check_deadline();
 		shedule_handle_of_request();
 	}
 
@@ -138,7 +138,8 @@ namespace http
 					logger_.log("Error send response: " + _error.message(), file_logger::severity_level::Error);
 					return;
 				}
-				shedule_handle_of_request();
+				//shedule_handle_of_request();
+				session_manager_.closeSession(std::move(self));
 			});
 	}
 	catch (const std::exception& _ex)
@@ -180,7 +181,7 @@ namespace http
 		}
 
 		response_.result(beast_http::status::ok);
-		response_.keep_alive(true);
+		response_.keep_alive(false);
 		response_.set(beast_http::field::server, SERVER_NAME.data());
 		response_.prepare_payload();
 

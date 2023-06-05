@@ -1,5 +1,7 @@
 #include <http/QueryStringParser.hpp>
 
+#include <boost/algorithm/string/replace.hpp>
+
 
 
 namespace http::request::url
@@ -13,10 +15,13 @@ namespace http::request::url
 
 	void QSparser::parse(const std::string_view& _target)
 	{
-		size_t start_query_string = _target.find_first_of('?');
-		if (start_query_string < _target.length())
+		std::string _replaced_target(_target);
+		boost::algorithm::replace_all(_replaced_target, "%20", " ");
+
+		size_t start_query_string = _replaced_target.find_first_of('?');
+		if (start_query_string < _replaced_target.length())
 		{
-			key_value_parser::parse(_target.substr(start_query_string + 1, _target.length() - start_query_string - 1), '=', '&');
+			key_value_parser::parse(_replaced_target.substr(start_query_string, _replaced_target.length() - start_query_string), '=', '&');
 		}
 	}
 }

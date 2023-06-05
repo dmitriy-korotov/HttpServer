@@ -15,7 +15,8 @@ namespace http::request::url
 		{ ".png",	"image/png" },
 		{ ".jpeg",	"image/jpeg" },
 		{ ".jpg",	"image/jpg" },
-		{ ".ico",	"image/ico" }
+		{ ".ico",	"image/ico" },
+		{ ".pdf",	"application/pdf" }
 	};
 	
 
