@@ -5,7 +5,7 @@
 	</head>
 	<body id="body">
 		<section class="test-form">
-			<form action="/registration" method="post">
+			<form action="/registration" method="post" class="form">
 				<label for="name" class="label">
 					<span>Input your name</span>
 					<br>
@@ -22,14 +22,17 @@
 					<br>
 					<input type="password" name="pass" class="input">
 				</label>
-				<label for="file" class="label">
-					<span>Chose your file</span>
-					<br>
-					<input type="file" name="file" class="input">
-				</label>
 				<br><br>
 				<input class="button" type="submit" value="Submit">
 			</form>	
+			<form action="/registration" method="post" class="form" enctype="multipart/form-data">
+				<label for="file" class="label">
+					<span>Chose your file</span>
+					<br>
+					<input type="file" name="file" class="input_file">
+				</label>
+				<input class="button" type="submit" value="Submit">
+			</form>
 		</section>
 	</body>
 </html>

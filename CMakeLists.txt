@@ -15,6 +15,7 @@ project(${PROJECT_NAME} VERSION 1.0 LANGUAGES CXX)
 
 option(MY_LIBTESTING "Включить модульное тестирование" ON)
 option(MY_COVERAGE "Включить измерение покрытия кода тестами" OFF)
+option(SANITIZERS "ON Sanitizers" ON)
 
 if (NOT MY_LIBTESTING)
     message(STATUS "Тестирование проекта HttpServer выключено")
@@ -55,3 +56,11 @@ add_compile_options(
     -Wsign-conversion
     -Wsign-promo
 )
+
+if (NOT SANITIZERS)
+	message(STATUS "Sanitizers ON")
+else()
+	add_compile_options(-fsanitize=address -fsanitize=fuzzer)
+	set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=fuzzer -fsanitize=address")
+	set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=fuzzer -fsanitize=address")	
+endif()

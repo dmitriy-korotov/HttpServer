@@ -10,9 +10,15 @@
 }
 
 .test-form {
+    display: flex;
+    justify-content: space-between;
+}
+
+.form {
+    margin-left: 30px;
     padding: 20px;
 
-    width: 300px;
+    width: 175px;
 
     border-radius: 20px;
 
@@ -38,4 +44,12 @@
     display: inline-block;
     border: 1px solid rgb(13, 0, 95);
     border-radius: 5px;
+}
+
+.input_file {
+    display: inline-block;
+    border: 1px solid rgb(13, 0, 95);
+    border-radius: 5px;
+
+    width: 150px;
 }
