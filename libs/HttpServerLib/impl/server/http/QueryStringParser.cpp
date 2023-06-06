@@ -1,6 +1,7 @@
 #include <http/QueryStringParser.hpp>
 
-#include <boost/url/decode_view.hpp>
+#include <http/Url.hpp>
+
 #include <boost/algorithm/string/replace.hpp>
 
 #include <iostream>
@@ -17,11 +18,8 @@ namespace http::request::url
 
 	void QSparser::parse(const std::string_view& _target)
 	{
-		boost::urls::pct_string_view _target_for_decoding = _target;
-		std::string _replaced_target;
-		_replaced_target.resize(_target_for_decoding.decoded_size());
-		_target_for_decoding.decode({}, boost::urls::string_token::assign_to(_replaced_target));
-
+		std::string _replaced_target = http::request::url::getEncodedUrl(_target);
+		
 		size_t start_query_string = _replaced_target.find_first_of('?');
 		if (start_query_string != std::string::npos)
 		{

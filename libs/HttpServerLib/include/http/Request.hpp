@@ -2,8 +2,10 @@
 
 #include <http/QueryStringParser.hpp>
 #include <http/ContentTypeConvertings.hpp>
+#include <http/Url.hpp>
 
 #include <boost/beast/http/message.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 #include <string>
 #include <unordered_map>
@@ -53,6 +55,8 @@ namespace http
 		const POST_t& POST() const;
 
 	private:
+
+		using Parent_t::body;
 
 		void __set_query_string() const;
 		void __set_post_body() const;
@@ -149,9 +153,18 @@ namespace http
 	template <typename Body, typename Fields>
 	void Request<Body, Fields>::__set_post_body() const
 	{
-		if (query_string_.empty() && Parent_t::method() == beast_http::verb::post)
+		if (Parent_t::method() == beast_http::verb::post)
 		{
-			auto content_type = Parent_t::get(beast_http::field::content_type);
+			auto content_type = Parent_t::at(beast_http::field::content_type);
+			switch (request::toContentTypeEnum(content_type))
+			{
+			case request::EContentType::application_form_url_encoded:
+				std::string tmp = boost::algorithm::replace_all_copy(Parent_t::body(), "+", " ");
+				std::string _replaced_post_body = request::url::getEncodedUrl(tmp);
+				util::KVparser kv_parser(_replaced_post_body, '=', '&');
+				POST_body_ = std::move(kv_parser.get());
+				break;
+			}
 		}
 	}
 
@@ -160,7 +173,8 @@ namespace http
 	template <typename Body, typename Fields>
 	Request<Body, Fields>::template POST_t& Request<Body, Fields>::POST()
 	{
-
+		__set_post_body();
+		return POST_body_;
 	}
 
 
@@ -168,6 +182,7 @@ namespace http
 	template <typename Body, typename Fields>
 	const Request<Body, Fields>::template POST_t& Request<Body, Fields>::POST() const
 	{
-		
+		__set_post_body();
+		return POST_body_;
 	}
 }

@@ -180,7 +180,7 @@ namespace http
 			}
 			response_ = handler_it->second(_request);
 		}
-
+		
 		response_.result(beast_http::status::ok);
 		response_.keep_alive(false);
 		response_.set(beast_http::field::server, SERVER_NAME.data());

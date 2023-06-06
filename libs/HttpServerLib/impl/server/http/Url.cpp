@@ -1,6 +1,8 @@
 #include <http/Url.hpp>
 #include <http/Defines.hpp>
 
+#include <boost/url/decode_view.hpp>
+
 
 
 namespace http::request::url
@@ -9,6 +11,17 @@ namespace http::request::url
 	{
 		size_t extention_position = _target.find_last_of('.');
 		return (extention_position != std::string::npos && _target.find_first_of('/', extention_position) == std::string::npos);
+	}
+
+
+
+	std::string getEncodedUrl(const std::string_view& _target)
+	{
+		boost::urls::pct_string_view _target_for_decoding = _target;
+		std::string _replaced_target;
+		_replaced_target.resize(_target_for_decoding.decoded_size());
+		_target_for_decoding.decode({}, boost::urls::string_token::assign_to(_replaced_target));
+		return _replaced_target;
 	}
 
 

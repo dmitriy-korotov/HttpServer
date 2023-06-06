@@ -39,7 +39,11 @@ static http::response_t testPostHandler(const http::request_t& _request)
 		{
 			std::cout << item.name() << " : " << item.value() << std::endl;
 		}
-		std::cout << _request.body() << std::endl;
+		const auto& POST = _request.POST();
+		for (const auto& item : std::get<http::request_t::key_value_t>(POST))
+		{
+			std::cout << item.first << " : " << item.second << std::endl;
+		}
 	}
 
 	return http::response::renderTemplate("C:/Users/User/MyProjects/HttpServer/res/templates/registration.html");
