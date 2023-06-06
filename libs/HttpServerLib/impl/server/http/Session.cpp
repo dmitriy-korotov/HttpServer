@@ -10,6 +10,7 @@
 #include <http/HttpServer.hpp>
 #include <http/ResponseTemplates.hpp>
 #include <http/Url.hpp>
+#include <http/ContentTypeConvertings.hpp>
 
 #include <boost/beast/http/read.hpp>
 #include <boost/beast/http/write.hpp>
@@ -164,7 +165,7 @@ namespace http
 			}
 
 			response_.set(beast_http::field::content_type,
-							request::url::convertExtentionToContentType(boost::filesystem::extension(_target)));
+							request::convertExtentionToContentType(boost::filesystem::extension(_target)));
 
 			file_reader file_reader_(path_to_file);
 			response_.body() = std::move(file_reader_.data());

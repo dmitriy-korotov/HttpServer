@@ -28,7 +28,7 @@ namespace util
 				_target.substr(start, sep - start),
 				_target.substr(sep + 1, end - sep - 1));
 
-			start = end;
+			start = end + 1;
 		}
 	}
 

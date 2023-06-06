@@ -1,11 +1,13 @@
 #pragma once
 
 #include <http/QueryStringParser.hpp>
+#include <http/ContentTypeConvertings.hpp>
 
 #include <boost/beast/http/message.hpp>
 
 #include <string>
 #include <unordered_map>
+#include <variant>
 
 
 
@@ -24,7 +26,10 @@ namespace http
 
 	public:
 
+		using key_value_t = std::unordered_map<std::string, std::string>;
+		using multipart_from_data_t = std::unordered_map<std::string, std::pair<std::string, std::string>>;
 		using QueryString = request::url::QSparser::query_string_t;
+		using POST_t = std::variant<std::string, key_value_t, multipart_from_data_t>;
 
 
 
@@ -41,16 +46,21 @@ namespace http
 		operator Parent_t() noexcept;
 		operator Parent_t&() noexcept;
 
-		QueryString GET() noexcept;
-		const QueryString& GET() const noexcept;
-		
+		QueryString& GET();
+		const QueryString& GET() const;
+
+		POST_t& POST();
+		const POST_t& POST() const;
+
 	private:
 
-		void __set_query_string() const noexcept;
+		void __set_query_string() const;
+		void __set_post_body() const;
 
 	private:
 		
 		mutable QueryString query_string_;
+		mutable POST_t POST_body_;
 
 	};
 
@@ -89,6 +99,7 @@ namespace http
 	}
 
 
+
 	template <typename Body, typename Alloc>
 	Request<Body, Alloc>::operator Parent_t() noexcept
 	{
@@ -106,9 +117,9 @@ namespace http
 
 
 	template <typename Body, typename Fields>
-	void Request<Body, Fields>::__set_query_string() const noexcept
+	void Request<Body, Fields>::__set_query_string() const
 	{
-		if (query_string_.empty())
+		if (query_string_.empty() && Parent_t::method() == beast_http::verb::get)
 		{
 			request::url::QSparser qs_parser_(Parent_t::target());
 			query_string_ = std::move(qs_parser_.get());
@@ -118,7 +129,7 @@ namespace http
 
 
 	template <typename Body, typename Fields>
-	Request<Body, Fields>::template QueryString Request<Body, Fields>::GET() noexcept
+	Request<Body, Fields>::template QueryString& Request<Body, Fields>::GET()
 	{
 		__set_query_string();
 		return query_string_;
@@ -127,9 +138,36 @@ namespace http
 
 
 	template <typename Body, typename Fields>
-	const Request<Body, Fields>::template QueryString& Request<Body, Fields>::GET() const noexcept
+	const Request<Body, Fields>::template QueryString& Request<Body, Fields>::GET() const
 	{
 		__set_query_string();
 		return query_string_;
+	}
+
+
+
+	template <typename Body, typename Fields>
+	void Request<Body, Fields>::__set_post_body() const
+	{
+		if (query_string_.empty() && Parent_t::method() == beast_http::verb::post)
+		{
+			auto content_type = Parent_t::get(beast_http::field::content_type);
+		}
+	}
+
+
+
+	template <typename Body, typename Fields>
+	Request<Body, Fields>::template POST_t& Request<Body, Fields>::POST()
+	{
+
+	}
+
+
+
+	template <typename Body, typename Fields>
+	const Request<Body, Fields>::template POST_t& Request<Body, Fields>::POST() const
+	{
+		
 	}
 }

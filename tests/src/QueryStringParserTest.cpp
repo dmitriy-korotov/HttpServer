@@ -50,8 +50,6 @@ BOOST_AUTO_TEST_CASE(RU_KeyValueTest)
 
 	auto parsed_result = qs_parser.get();
 
-	std::cout << parsed_result.begin()->first << " : " << parsed_result.begin()->second << std::endl;
-
 	BOOST_TEST(parsed_result["Дима"] == "Коротов");
 }
 
