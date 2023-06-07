@@ -11,7 +11,7 @@
 
 
 
-static constexpr std::string_view DEFAULT_FILE_LOGGER_NAME = "ServerLog";
+static constexpr std::string_view DEFAULT_FILE_LOGGER_NAME = "Server";
 
 
 

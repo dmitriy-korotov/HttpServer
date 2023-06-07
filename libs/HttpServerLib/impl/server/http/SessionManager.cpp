@@ -6,7 +6,7 @@
 
 
 
-static constexpr std::string_view DEFAULT_FILE_LOGGER_NAME = "SessionManagerLog";
+static constexpr std::string_view DEFAULT_FILE_LOGGER_NAME = "SessionManager";
 
 
 

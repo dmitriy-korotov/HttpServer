@@ -4,7 +4,7 @@
 
 
 
-BOOST_AUTO_TEST_SUITE(TestUrlFunctions)
+BOOST_AUTO_TEST_SUITE(UrlFunctionsTest)
 
 BOOST_AUTO_TEST_CASE(IsPathToSourceFile)
 {

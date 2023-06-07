@@ -54,6 +54,10 @@ namespace http
 		POST_t& POST();
 		const POST_t& POST() const;
 
+		void set_body(std::string&& _body) noexcept;
+		std::string& get_body() noexcept;
+		const std::string& get_body() const noexcept;
+
 	private:
 
 		using Parent_t::body;
@@ -165,6 +169,8 @@ namespace http
 				POST_body_ = std::move(kv_parser.get());
 				break;
 			}
+			case request::EContentType::multipart_form_data:
+				break;
 		}
 	}
 
@@ -184,5 +190,29 @@ namespace http
 	{
 		__set_post_body();
 		return POST_body_;
+	}
+
+
+
+	template <typename Body, typename Fields>
+	void Request<Body, Fields>::set_body(std::string&& _body) noexcept
+	{
+		Parent_t::body() = std::move(_body);
+	}
+
+
+
+	template <typename Body, typename Fields>
+	std::string& Request<Body, Fields>::get_body() noexcept
+	{
+		return Parent_t::body();
+	}
+
+
+
+	template <typename Body, typename Fields>
+	const std::string& Request<Body, Fields>::get_body() const noexcept
+	{
+		return Parent_t::body();
 	}
 }
